@@ -1,0 +1,70 @@
+material AchievementBackground 
+{
+    receive_shadows off
+
+    technique
+    {
+        pass 
+        {
+			scene_blend alpha_blend
+            texture_unit 
+            {
+                texture AchievementBackground.png
+                scale 1.0 1.0
+                colour_op modulate
+            }
+        }
+    }
+}
+
+material AchievementBackground2 
+{
+    receive_shadows off
+
+    technique
+    {
+        pass 
+        {
+			scene_blend alpha_blend
+            texture_unit 
+            {
+                texture AchievementBackground.png
+			    alpha_op_ex source1 src_manual src_current 0.8
+            }
+        }
+    }
+}
+
+material Achievement/Background/All
+ {
+   technique
+   {
+     pass
+     {
+       scene_blend alpha_blend
+       depth_write off
+ 
+       texture_unit
+       {
+         colour_op_ex source1 src_manual src_current 0.64 0.96 0.61
+       }
+     }
+   }
+ }
+ 
+ material Achievement/Background/AllBorder
+ {
+   technique
+   {
+     pass
+     {
+       scene_blend alpha_blend
+       depth_write off
+ 
+       texture_unit
+       {
+         colour_op_ex source1 src_manual src_current 0.16 .39 0.13
+      }
+     }
+   }
+ }

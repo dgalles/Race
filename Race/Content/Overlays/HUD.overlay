@@ -1,0 +1,417 @@
+ 	
+
+// The name of the overlay comes first
+HUD/Score
+{
+    zorder 400
+	
+	container Panel(HUD/Armor/Panel)
+    {
+      metrics_mode relative
+
+		left 0.01
+		top 0.79
+		element TextArea(HUD/Armor/Text)
+		{
+			font_name Big
+			char_height 0.04
+			colour 1 1 1
+			top 0.01
+			caption Armor 
+		}
+	
+		container Panel(HUD/Armor/1)
+		{
+			left 0.1
+			top 0
+			width 0.1
+			height 0.05
+			material ArmorMat2	
+		}
+		
+		container Panel(HUD/Armor/2)
+		{
+			left 0.21
+			top 0
+			width 0.1
+			height 0.05
+			material ArmorMat2	
+		}
+
+		container Panel(HUD/Armor/3)
+		{
+			left 0.32
+			top 0
+			width 0.1
+			height 0.05
+			material ArmorMat2	
+		}
+
+		container Panel(HUD/Armor/4)
+		{
+			left 0.43
+			top 0
+			width 0.1
+			height 0.05
+			material ArmorMat2	
+		}
+
+		container Panel(HUD/Armor/5)
+		{
+			left 0.54
+			top 0
+			width 0.1
+			height 0.05
+			material ArmorMat2	
+		}
+
+		container Panel(HUD/Armor/6)
+		{
+			left 0.65
+			top 0
+			width 0.1
+			height 0.05
+			material ArmorMat2	
+		}
+		
+		container Panel(HUD/Armor/7)
+		{
+			left 0.76
+			top 0
+			width 0.1
+			height 0.05
+			material ArmorMat2	
+		}
+		container Panel(HUD/Armor/8)
+		{
+			left 0.87
+			top 0
+			width 0.1
+			height 0.05
+			material ArmorMat2	
+		}
+
+	}
+	
+
+	
+    container Panel(HUD/Score/Panel)
+    {
+      metrics_mode relative
+
+      left 0.0
+      top 0.87
+      width 1
+      height 0.1
+		
+		element TextArea(HUD/Score/Panel/Coins)
+		{
+		metrics_mode relative
+		
+         left 0.02
+         font_name Big
+         char_height 0.04
+         colour 1 1 1
+         caption Coins = 0
+		}
+		element TextArea(HUD/Score/Panel/Distance)
+		{
+		metrics_mode relative
+		
+         left 0.3
+         font_name Big
+         char_height 0.04
+         colour 1 1 1
+         caption Distance = 0 meters
+		}
+		
+		element TextArea(HUD/Score/Panel/Speed)
+		{
+		metrics_mode relative
+		
+         left 0.7
+         font_name Big
+         char_height 0.04
+         colour 1 1 1
+         caption Speed = 0 m / s
+		}
+		
+    }
+	
+	 container Panel(HUD/Score/GhostPanel)
+    {
+      metrics_mode relative
+
+      left 0.0
+      top 0.95
+      width 1
+      height 0.1
+		
+		element TextArea(HUD/Score/GhostPanel/Coins)
+		{
+		metrics_mode relative
+		
+         left 0.02
+         font_name Big
+         char_height 0.04
+         colour 1 1 1 0.5
+         caption Coins = 0
+		}
+		element TextArea(HUD/Score/GhostPanel/Distance)
+		{
+		metrics_mode relative
+		
+         left 0.3
+         font_name Big
+         char_height 0.04
+         colour 1 1 1 0.5
+         caption Distance = 0 meters
+		}
+		
+		element TextArea(HUD/Score/GhostPanel/Speed)
+		{
+		metrics_mode relative
+		
+         left 0.7
+         font_name Big
+         char_height 0.04
+         colour 1 1 1 0.5
+         caption Speed = 0 m / s
+		}
+		
+    }
+	
+	
+}
+
+
+
+
+HUD/LeftArrow
+{
+    zorder 200
+	
+    container Panel(HUD/LeftArrow/Panel)
+    {
+      metrics_mode relative
+
+	  left 0.05
+      top 0.05
+      width 0.2
+      height 0.2
+	  material LeftArrow
+    }    
+}
+
+HUD/RightArrow
+{
+
+    container Panel(HUD/RightArrow/Panel)
+    {
+      metrics_mode relative
+
+	  left 0.75
+      top 0.05
+      width 0.2
+      height 0.2
+	  material RightArrow
+    }   
+}
+
+HUD/CenterArrow
+{
+    container Panel(HUD/CenterArrow/Panel)
+    {
+      metrics_mode relative
+
+	  left 0.4
+      top 0.0
+      width 0.2
+      height 0.2
+	  material CenterArrow
+    }   
+}
+
+HUD/UpArrow
+{
+    container Panel(HUD/UpArrow/Panel)
+    {
+      metrics_mode relative
+
+	  left 0.4
+      top 0.0
+      width 0.2
+      height 0.2
+	  material UpArrow
+    }   
+}
+
+
+HUD/Racing/Done
+{
+	container Panel(HUD/Racing/Done/Panel)
+	{
+	   left 0.1
+	   top 0.2
+	   width 0.7
+	   height 0.48
+	   
+	   material blueSemiTrans
+
+		element TextArea(HUD/Racing/Done/Panel/Player)
+		{
+		metrics_mode relative
+		
+         left 0.01
+		 top 0.02
+         font_name Big
+         char_height 0.07
+         colour 1 1 1
+         caption Race Complete
+		}
+		
+		element TextArea(HUD/Racing/Done/Panel/Player/Time)
+		{
+		metrics_mode relative
+		
+         left 0.01
+		 top 0.12
+         font_name Big
+         char_height 0.07
+         colour 1 1 1
+         caption Time = 
+		}	   
+		
+		element TextArea(HUD/Racing/Done/Panel/Ghost/Time)
+		{
+		metrics_mode relative
+		
+         left 0.01
+		 top 0.22
+         font_name Big
+         char_height 0.07
+         colour 1 1 1
+         caption Ghost Time = (no ghost)
+		}	  
+
+		element TextArea(HUD/Racing/Done/Panel/Continue)
+		{
+		metrics_mode relative
+		
+         left 0.01
+		 top 0.32
+         font_name Big
+         char_height 0.07
+         colour .2 1 .2
+         caption Press Space to continue
+		}			
+
+	}	
+
+}
+
+HUD/Racing
+{
+	container Panel(HUD/Racing/Panel)
+	{
+	   left 0.02
+	   top 0.03
+	   width 0.7
+	   height 0.08
+	   
+	   material blueSemiTrans
+
+		element TextArea(HUD/Racing/Panel/Time)
+		{
+		metrics_mode relative
+		
+         left 0.01
+		 top 0.02
+         font_name Big
+         char_height 0.04
+         colour 1 1 1
+         caption Time = 0
+		}
+		
+		element TextArea(HUD/Racing/Panel/Message)
+		{
+		metrics_mode relative
+		
+         left 0.4
+		 top 0.02
+         font_name Big
+         char_height 0.04
+         colour 1 1 1
+         caption Racing to xx Coins
+		}
+	   
+	}
+
+}
+
+
+
+HUD/SpeedUp
+{
+    container Panel(HUD/SpeedUp/Panel)
+    {
+      metrics_mode relative
+
+      left 0.3
+      top 0.7
+		
+		element TextArea(HUD/SpeedUp/Text)
+		{
+		metrics_mode relative
+		
+         font_name Big
+         char_height 0.08
+		 
+         colour 0.5 1 0.5
+         caption Increasing Speed
+		}
+	}
+}
+
+HUD/Armor
+{
+
+}
+
+
+HUD/SlowDown
+{
+   container Panel(HUD/SlowDown/Panel)
+    {
+      metrics_mode relative
+
+      left 0.3
+      top 0.7
+		
+		element TextArea(HUD/SlowDown/Text)
+		{
+		metrics_mode relative
+		
+         font_name Big
+         char_height 0.08
+		 
+         colour 1 0.5 0.5
+         caption Decreasing Speed
+		}
+	}
+}
+
+HUD/DownArrow
+{
+    container Panel(HUD/DownArrow/Panel)
+    {
+      metrics_mode relative
+
+	  left 0.4
+      top 0.0
+      width 0.2
+      height 0.2
+	  material DownArrow
+    }   
+}
+

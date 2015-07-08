@@ -1,0 +1,32 @@
+
+
+Loading/Overlay
+{
+
+    container Panel(Loading/Overlay/Panel)
+    {
+      metrics_mode relative
+
+		material Kinect/Blue
+		
+		left 0.1
+		top 0.3
+		width 0.8
+		height 0.4
+
+		
+	  	element TextArea(Loading/Overlay/Panel/Text)
+		{
+		metrics_mode relative
+		
+         left 0.1
+		 top 0.05
+         font_name Big
+         char_height 0.05
+         colour 1 1 1
+         caption Connecting to Server
+		}
+		
+		
+    }   
+}

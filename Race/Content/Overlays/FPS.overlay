@@ -1,0 +1,20 @@
+FrameCounter
+{
+    zorder 400
+	
+	container Panel(FrameCounter/Panel)
+    {
+      metrics_mode relative
+
+		left 0.1
+		top 0.5
+		element TextArea(FrameCounter/Text)
+		{
+			font_name Big
+			char_height 0.04
+			colour 1 1 1
+			top 0.01
+			caption FPS: <undefined> 
+		}
+	}
+}

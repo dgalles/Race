@@ -1,0 +1,25 @@
+<?xml version="1.0" standalone="no" ?>
+<!DOCTYPE project PUBLIC "-//audacityproject-1.3.0//DTD//EN" "http://audacity.sourceforge.net/xml/audacityproject-1.3.0.dtd" >
+<project xmlns="http://audacity.sourceforge.net/xml/" projname="bellRight_data" version="1.3.0" audacityversion="2.0.5" sel0="0.1603858277" sel1="0.1603858277" vpos="0" h="0.0000000000" zoom="2599.9803478432" rate="44100.0">
+	<tags/>
+	<wavetrack name="83541__zgump__bell-0104" channel="0" linked="1" mute="0" solo="0" height="150" minimized="0" isSelected="1" rate="44100" gain="1.0" pan="1.0">
+		<waveclip offset="0.00000000">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="10177">
+				<waveblock start="0">
+					<simpleblockfile filename="e0000eef.au" len="10177" min="-0.71344" max="0.750977" rms="0.047974"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="83541__zgump__bell-0104" channel="1" linked="0" mute="0" solo="0" height="150" minimized="0" isSelected="1" rate="44100" gain="1.0" pan="1.0">
+		<waveclip offset="0.00000000">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="10177">
+				<waveblock start="0">
+					<simpleblockfile filename="e000009e.au" len="10177" min="-0.71347" max="0.751007" rms="0.047975"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+</project>
