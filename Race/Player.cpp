@@ -12,7 +12,7 @@ Player::Player(World *world, Kinect *k, Achievements *ach) :
 
 	loadModel("car.mesh", mWorld->SceneManager());
 	setScale(Ogre::Vector3(2,3,5));
-	setPosition(Ogre::Vector3(500,0,500));
+	setPosition(Ogre::Vector3(4000,0,3500));
 	mVelocityDirection = Ogre::Vector3::UNIT_Z;
 	reset();
 }
@@ -26,7 +26,8 @@ void Player::reset()
 	mKinectSensitivityFB = 1.0f;
 	mKinectSensitivityLR = 1.0f;
 	mDegreesPerSecond = 20.0f;
-	mSpeed = 10;
+	mMaxSpeed = 100;
+	mSpeed = 0;
 }
 
 void Player::Think(float time)
@@ -36,6 +37,14 @@ void Player::Think(float time)
 	updateAnglesFromControls(leftRight,frontBack);
 
 		mSpeed +=frontBack.valueDegrees() * time * -10;
+	if (mSpeed > mMaxSpeed)
+	{
+		mSpeed = mMaxSpeed;
+	}
+	if (mSpeed < -mMaxSpeed)
+	{
+		mSpeed = -mMaxSpeed;
+	}
 
 	if (Ogre::Math::Abs(leftRight) > Ogre::Degree(10))
 	{

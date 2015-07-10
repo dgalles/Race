@@ -1,3 +1,15 @@
+
+HUD/ArrowDirection
+{
+	container Panel(HUD/ArrowDirection/Panel)
+    {
+	left 0.3
+	top 0.1
+
+	}
+
+}
+
  	
 
 // The name of the overlay comes first

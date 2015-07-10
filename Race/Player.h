@@ -34,7 +34,11 @@ public:
 	Ogre::Vector3 getVelocity() { return mVelocityDirection * mSpeed; }
 
 	void setSpeed(float newSpeed) { mSpeed = newSpeed;} 
+	float getSpeed() { return mSpeed;} 
 
+
+	float getMaxSpeed() { return mMaxSpeed; }
+	void setMaxSpeed(float newMaxSpeed) { mMaxSpeed = newMaxSpeed;}
 	void reset();
 
 protected:
@@ -55,7 +59,7 @@ protected:
 
 	Ogre::Vector3 mVelocityDirection;
 	float mSpeed;
-
+	float mMaxSpeed;
 	float mDegreesPerSecond;
 
 };

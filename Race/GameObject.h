@@ -43,6 +43,9 @@ public:
 
 	void translate(Ogre::Vector3 delta);
 
+
+    bool collides(GameObject *other);
+
     bool collides(GameObject *other, Ogre::Vector3 &MTD);
     bool collides(const GameObject &other, Ogre::Vector3 &MTD);
 

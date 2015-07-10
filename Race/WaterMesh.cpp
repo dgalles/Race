@@ -168,6 +168,10 @@ WaterMesh::~WaterMesh ()
 /* ========================================================================= */
 void WaterMesh::push(Real x, Real y, Real depth, bool absolute)
 {
+	if (x < 0 || y < 0 || x > complexity || y > complexity)
+	{
+		return;
+	}
 	float *buf = vertexBuffers[currentBuffNumber]+1 ;
 	// scale pressure according to time passed
 	depth = depth * lastFrameTime * ANIMATIONS_PER_SECOND ;

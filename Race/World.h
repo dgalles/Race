@@ -29,6 +29,7 @@ public:
 
 	void Think(float time);
 
+	int worldRand();
 
 protected:
 
@@ -42,6 +43,9 @@ protected:
     std::vector<GameObject *> mStaticObjects;
 	GameObject *mGoal;
 	WaterMesh *mWaterMesh;
-
-
+	int mSeed;
+	int goalIndex;
+	std::vector<Ogre::Vector3> mGoalPositions;
+	int mCurrentIndex ;
+	Ogre::SceneNode *mArrowNode;
 };
