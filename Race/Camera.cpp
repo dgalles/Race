@@ -27,19 +27,19 @@ void
 {
 	if (typ == FollowType::NORMAL)
 	{
-		mDesiredFollowDistance = 200;
-		mDesiredFollowHeight = 50;
+		mDesiredFollowDistance = 100;
+		mDesiredFollowHeight = 25;
 
 	}
 	else if (typ == FollowType::CLOSE)
 	{
-		mDesiredFollowDistance = 150;
+		mDesiredFollowDistance = 50;
 		mDesiredFollowHeight = 15;
 
 	}
 	else if (typ = FollowType::HIGH)
 	{
-		mDesiredFollowDistance = 200;
+		mDesiredFollowDistance = 150;
 		mDesiredFollowHeight = 80;
 	}
 }

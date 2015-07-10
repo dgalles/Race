@@ -417,14 +417,14 @@ Race::setupMenus(bool loginRequired)
 	//////////////////////////////////////////////////
 
 
-	if (loginRequired)
-	{
-		login->enable();
-	}
-	else
-	{
-		mainMenu->enable();
-	}
+	//if (loginRequired)
+	//{
+	//	login->enable();
+	//}
+	//else
+	//{
+	//	mainMenu->enable();
+	//}
 
 }
 

@@ -59,6 +59,10 @@ bool GameObject::collides(const GameObject &other, Ogre::Vector3 &MTD)
 }
 
 
+void GameObject::setScale(float newScale)
+{
+	setScale(Ogre::Vector3::UNIT_SCALE * newScale);
+}
 
 
 void GameObject::setScale(Ogre::Vector3 newScale)

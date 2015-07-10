@@ -58,6 +58,9 @@
     <ClCompile Include="Player.cpp">
       <Filter>Game Source</Filter>
     </ClCompile>
+    <ClCompile Include="WaterMesh.cpp">
+      <Filter>Game Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AIManager.h">
@@ -115,6 +118,9 @@
       <Filter>Game Headers</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
+      <Filter>Game Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="WaterMesh.h">
       <Filter>Game Headers</Filter>
     </ClInclude>
   </ItemGroup>

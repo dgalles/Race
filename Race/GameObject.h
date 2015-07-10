@@ -35,6 +35,7 @@ public:
     void pitch(Ogre::Radian r);
     void roll(Ogre::Radian r);
 
+    void setScale(float newScale);
 
     void setScale(Ogre::Vector3 newScale);
 

@@ -11,7 +11,8 @@ Player::Player(World *world, Kinect *k, Achievements *ach) :
 {
 
 	loadModel("car.mesh", mWorld->SceneManager());
-	setScale(Ogre::Vector3(5,6,10));
+	setScale(Ogre::Vector3(2,3,5));
+	setPosition(Ogre::Vector3(500,0,500));
 	mVelocityDirection = Ogre::Vector3::UNIT_Z;
 	reset();
 }
@@ -20,11 +21,11 @@ Player::Player(World *world, Kinect *k, Achievements *ach) :
 void Player::reset()
 {
 	mInvertControls = false;
-	mEnableKeyboard = false;
+	mEnableKeyboard = true;
 	mEnableKinect = true;
 	mKinectSensitivityFB = 1.0f;
 	mKinectSensitivityLR = 1.0f;
-	mDegreesPerSecond = 10.0f;
+	mDegreesPerSecond = 20.0f;
 	mSpeed = 10;
 }
 
@@ -38,7 +39,7 @@ void Player::Think(float time)
 
 	if (Ogre::Math::Abs(leftRight) > Ogre::Degree(10))
 	{
-		Ogre::Degree change = leftRight * time * - mDegreesPerSecond;
+		Ogre::Degree change = leftRight * time * - mDegreesPerSecond / 30.0f;
 		yaw(change);
 	}
 	mVelocityDirection = mFacing;

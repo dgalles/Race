@@ -11,7 +11,7 @@ class Player;
 class HUD;
 class RaceCamera;
 class Race;
-
+class WaterMesh;
 
 class World
 {
@@ -40,7 +40,8 @@ protected:
 
     std::vector<GameObject *> mDynamicObjects;
     std::vector<GameObject *> mStaticObjects;
-
+	GameObject *mGoal;
+	WaterMesh *mWaterMesh;
 
 
 };
