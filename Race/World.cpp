@@ -11,7 +11,7 @@
 #include "OgreOverlayContainer.h"
 #include "InputHandler.h"
 #include "OgreQuaternion.h"
-
+#include "Camera.h"
 
 #define MESH_NAME "WaterMesh"
 #define ENTITY_NAME "WaterEntity"
@@ -41,9 +41,12 @@ float positions[] = {4000,5,4000,
 					5000,5,4000};
 
 
-World::World(Ogre::SceneManager *sceneManager, HUD *hud, Race *base) :
-	mSceneManager(sceneManager), mBase(base), mHUD(hud)
+World::World(Ogre::SceneManager *sceneManager, HUD *hud, RaceCamera * cam, Race *base) :
+	mSceneManager(sceneManager), mBase(base), mHUD(hud), mCamera(cam)
 {
+		 mRoll = 0;
+	 mPitch = 0;
+	 mYaw = 0;
 	mSceneManager->setAmbientLight(Ogre::ColourValue(1,1,1));
 
 	Ogre::OverlayManager *om = Ogre::OverlayManager::getSingletonPtr();
@@ -56,9 +59,9 @@ World::World(Ogre::SceneManager *sceneManager, HUD *hud, Race *base) :
 	mArrowNode->attachObject(arrowMesh);
 
 	arrowOverlay->add3D(mArrowNode);
-	mArrowNode->setPosition(0, 1,-10);
+	mArrowNode->setPosition(0, 3.3f,-10);
 	mArrowNode->pitch(Ogre::Degree(-90));
-	//mArrowNode->roll(Ogre::Degree(90));
+	mArrowNode->roll(Ogre::Degree(90));
 
 
 	mWaterMesh = new WaterMesh(MESH_NAME, PLANE_SIZE, COMPLEXITY);
@@ -105,7 +108,7 @@ World::World(Ogre::SceneManager *sceneManager, HUD *hud, Race *base) :
 
 
 	mGoal = new GameObject(GameObject::GATE, "Goal.mesh",  mSceneManager,Ogre::Vector3(4000,5,4000), Ogre::Quaternion::IDENTITY);
-	mGoal->setScale(10);
+	mGoal->setScale(15);
 	mGoal->setAlpha(0.5f);
 	mGoal->roll(Ogre::Degree(90));
 
@@ -148,10 +151,10 @@ void World::Think(float time)
 	if (mPlayer->getSpeed() > 4)
 	{
 		float displacement = -(Math::Abs(mPlayer->getSpeed()) / (mPlayer->getMaxSpeed() * 10.0f));
-		mWaterMesh->push(WaterPlaneX * COMPLEXITY / PLANE_SIZE,WaterPlaneZ * COMPLEXITY / PLANE_SIZE, displacement);
+		mWaterMesh->push(WaterPlaneX * COMPLEXITY / PLANE_SIZE,WaterPlaneZ * COMPLEXITY / PLANE_SIZE, displacement,true);
 	}
 
-	mWaterMesh->updateMesh(time);
+	//mWaterMesh->updateMesh(time);
 
 	if (mPlayer->collides(mGoal))
 	{
@@ -165,29 +168,35 @@ void World::Think(float time)
      mGoal->pitch(Ogre::Degree(time * 30));
 
 	 Ogre::Vector3 diff = mGoal->getPosition() - mPlayer->getPosition();
+	 diff = mCamera->getOrientation().Inverse() *diff;
+	 diff.y = 0;
 
-	 mArrowNode->getOrientation();
+	 diff.normalise();
 
 	 Ogre::Quaternion q;
-	 q.FromAxes(diff, Ogre::Vector3::UNIT_Y, Ogre::Vector3::UNIT_Y.crossProduct(diff));
+	 q.FromAxes( Ogre::Vector3::UNIT_Y.crossProduct(diff), Ogre::Vector3::UNIT_Y,diff);
 
 	 mArrowNode->setOrientation(q);
 
 	  InputHandler *ih = InputHandler::getInstance();
 
-	  if (ih->IsKeyDown(OIS::KC_R))
+	  if (ih->IsKeyDown(OIS::KC_Q))
 	  {
-		  mArrowNode->roll(Ogre::Degree(20*time));
+		  Ogre::Vector3 pos = mArrowNode->getPosition();
+		  pos.y += time;
+		  mArrowNode->setPosition(pos);
+
 	  }
-	  	  if (ih->IsKeyDown(OIS::KC_P))
+	  	  if (ih->IsKeyDown(OIS::KC_A))
 	  {
-		  mArrowNode->pitch(Ogre::Degree(20*time));
-	  }
-		  	  if (ih->IsKeyDown(OIS::KC_Y))
-	  {
-		  mArrowNode->yaw(Ogre::Degree(20*time));
+		  Ogre::Vector3 pos = mArrowNode->getPosition();
+		  pos.y -= time;
+		  mArrowNode->setPosition(pos);
 	  }
 
+//		  mArrowNode->roll(Ogre::Degree(mRoll));
+		  mArrowNode->pitch(Ogre::Degree(90));
+		  mArrowNode->yaw(Ogre::Degree(90));
 
 	  
 

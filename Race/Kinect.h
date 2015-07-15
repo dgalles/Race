@@ -1,5 +1,5 @@
 #pragma once
-#define KINECT_AVAILABLE
+// #define KINECT_AVAILABLE
 #include <windows.h>
 #include <ole2.h>
 
@@ -61,6 +61,8 @@ protected:
 
 	static DWORD WINAPI     Nui_ProcessThread(LPVOID pParam);
 	DWORD WINAPI            Nui_ProcessThread();
+#else
+		Ogre::Vector3 mSkelPositions[21];
 #endif
 
 	bool   recenterNext;

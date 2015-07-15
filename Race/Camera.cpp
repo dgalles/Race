@@ -5,8 +5,8 @@
 #include "Player.h"
 #include "GameObject.h"
 
-RaceCamera::RaceCamera(Ogre::Camera *renderCamera, World *world) :
-mRenderCamera(renderCamera), mWorld(world), mCurrentTrackingObject(0), mReview(false)
+RaceCamera::RaceCamera(Ogre::Camera *renderCamera) :
+mRenderCamera(renderCamera), mCurrentTrackingObject(0), mReview(false)
 {
 	mRenderCamera->setNearClipDistance(2);
 	mType = FollowType::NORMAL;

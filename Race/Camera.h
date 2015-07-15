@@ -1,3 +1,5 @@
+#include "OgreVector3.h"
+#include "OgreQuaternion.h"
 namespace Ogre
 {
     class Camera;
@@ -15,7 +17,7 @@ public:
 
 	enum FollowType {CLOSE, NORMAL, HIGH};
 
-    RaceCamera(Ogre::Camera *renderCamera, World *world); 
+    RaceCamera(Ogre::Camera *renderCamera); 
     void Think(float time);
     // If you have a different cameras, you'll want some acessor methods here.
     //  If your camera always stays still, you could remove this class entirely
@@ -27,6 +29,8 @@ public:
 	void UnPause();
 	bool getReview() { return mReview; }
 	void setReview(bool rev) {mReview = rev;}
+	Ogre::Vector3 getPosition() {return mRenderCamera->getPosition();} 
+	Ogre::Quaternion getOrientation() { return mRenderCamera->getOrientation(); }
 protected:
 
     Ogre::Camera *mRenderCamera;

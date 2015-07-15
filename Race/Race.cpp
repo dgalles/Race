@@ -105,9 +105,9 @@ Race::createScene()
 	SoundBank::getInstance()->setup();
 	mHUD = new HUD();
 	mAchievements = new Achievements("Achievements.txt");
-	mWorld = new World(mSceneMgr, mHUD, this);
+	mRaceCamera = new RaceCamera(mCamera);
+	mWorld = new World(mSceneMgr, mHUD, mRaceCamera, this);
 	//mWorld[1] = new World(mSceneMgr, mHUD, this, true, mWorld[0]->trackPath);
-	mRaceCamera = new RaceCamera(mCamera, mWorld);
 	//mRaceCamera[1] = new RaceCamera(mCamera[1], mWorld[1]);
 	InputHandler::getInstance()->initialize(mWindow);
 	InputHandler::getInstance()->setEventCallback(MenuManager::getInstance());
