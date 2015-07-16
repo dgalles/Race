@@ -5,43 +5,139 @@
     </Config>
 	
 	<Gates>
-		<Gate Name="Gate#1">
-            <Position X="4000" Y="5" Z="4000" />
+		<Gate>
+            <Position X="4000" Y="0" Z="1000" />
         </Gate>
-        <Gate Name="Gate#2">
-            <Position X="4000" Y="5" Z="4300" />
+        <Gate>
+            <Position X="4000" Y="0" Z="1500" />
         </Gate>
-        <Gate Name="Gate#3">
-            <Position X="4300" Y="5" Z="4600" />
+        <Gate>
+            <Position X="3500" Y="0" Z="2000" />
         </Gate>
-        <Gate Name="Gate#3">
-            <Position X="4600" Y="5" Z="4600" />
+        <Gate>
+            <Position X="3000" Y="0" Z="2000" />
         </Gate>
-		        <Gate Name="Gate#3">
-            <Position X="4600" Y="5" Z="4300" />
+		<Gate>
+            <Position X="2500" Y="0" Z="2500" />
         </Gate>
-		        <Gate Name="Gate#3">
-            <Position X="4100" Y="5" Z="5500" />
+
+		<Gate>
+            <Position X="2500" Y="0" Z="3000" />
         </Gate>
-		<Gate Name="Gate#3">
-            <Position X="4000" Y="5" Z="5800" />
+
+		
+		<Gate>
+            <Position X="3000" Y="0" Z="3500" />
+		</Gate>
+		<Gate>
+            <Position X="4000" Y="0" Z="3500" />
+		</Gate>
+		
+		
+		<Gate>
+            <Position X="4500" Y="0" Z="2500" />
+		</Gate>
+		<Gate>
+            <Position X="5000" Y="0" Z="2000" />
+		</Gate>
+		<Gate>
+            <Position X="5500" Y="0" Z="2000" />
+		</Gate>
+				<Gate>
+            <Position X="6000" Y="0" Z="2500" />
 		</Gate>
 
- 		 <Gate Name="Gate#3">
-            <Position X="3900" Y="5" Z="6100" />
-        </Gate>
+		<Gate>
+            <Position X="5500" Y="0" Z="3000" />
+		</Gate>
+		<Gate>
+            <Position X="5500" Y="0" Z="3500" />
+		</Gate>
+		<Gate>
+            <Position X="5000" Y="0" Z="4000" />
+		</Gate>
+		<Gate>
+            <Position X="4000" Y="0" Z="4000" />
+		</Gate>
+		<Gate>
+            <Position X="3500" Y="0" Z="4500" />
+		</Gate>
+		<Gate>
+            <Position X="4000" Y="0" Z="5000" />
+		</Gate>
+		<Gate>
+            <Position X="5000" Y="0" Z="5000" />
+		</Gate>
+		<Gate>
+            <Position X="5500" Y="0" Z="5500" />
+		</Gate>
+		<Gate>
+            <Position X="5000" Y="0" Z="6000" />
+		</Gate>
+		<Gate>
+            <Position X="4000" Y="0" Z="6000" />
+		</Gate>
+		<Gate>
+            <Position X="3500" Y="0" Z="5500" />
+		</Gate>
+				<Gate>
+            <Position X="2500" Y="0" Z="5500" />
+		</Gate>
 
-        <Gate Name="Gate#4">
-            <Position X="4000" Y="5" Z="4000" />
-        </Gate>
-	</Gates>
+		<Gate>
+            <Position X="2500" Y="0" Z="4000" />
+		</Gate>
+
+		</Gates>
 	<Walls>
 
-        <Wall Name="Wall#1">
-            <Position X="3000" Y="0" Z="3000" />
+        <Wall>
+            <Position X="3000" Y="0" Z="1500" />
 			<Rotation> 30.0</Rotation>
 			<Scale>43</Scale>
 			<Model>Iceberg1.mesh</Model>
         </Wall>
-	</Walls>		
+        <Wall>
+            <Position X="3300" Y="0" Z="2500" />
+			<Rotation> 30.0</Rotation>
+			<Scale>43</Scale>
+			<Model>Iceberg1.mesh</Model>
+        </Wall>
+
+		        <Wall>
+            <Position X="4000" Y="0" Z="2500" />
+			<Rotation> 30.0</Rotation>
+			<Scale>43</Scale>
+			<Model>Iceberg1.mesh</Model>
+        </Wall>
+		<Wall>
+            <Position X="3500" Y="0" Z="1500" />
+			<Rotation> 30.0</Rotation>
+			<Scale>43</Scale>
+			<Model>Iceberg1.mesh</Model>
+        </Wall>
+		<Wall>
+            <Position X="5200" Y="0" Z="2500" />
+			<Rotation> 30.0</Rotation>
+			<Scale>43</Scale>
+			<Model>Iceberg1.mesh</Model>
+        </Wall>
+
+		<Wall>
+            <Position X="6200" Y="0" Z="3200" />
+			<Rotation> 30.0</Rotation>
+			<Scale>43</Scale>
+			<Model>Iceberg1.mesh</Model>
+        </Wall>
+		<Wall>
+            <Position X="4500" Y="0" Z="3500" />
+			<Rotation> 30.0</Rotation>
+			<Scale>43</Scale>
+			<Model>Iceberg1.mesh</Model>
+        </Wall>
+
+		
+
+
+		</Walls>		
 </Map>
