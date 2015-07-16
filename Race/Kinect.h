@@ -42,6 +42,7 @@ public:
 	void addSkelListener(KinectSkelMsgr *listener);
 	virtual void StartSession();
 	virtual void EndSession();
+	Ogre::Vector3 handPositionAdjusted(bool &usingLeft) ;
 
 protected:
 
@@ -70,6 +71,13 @@ protected:
 	float  mTimeSinceLastLog;
 	Ogre::Vector2 baseVectorDelta;
 
+	bool mCallibrated;
+
+
+	Ogre::Vector3 mLeftWristPos;
+	Ogre::Vector3 mRightWristPos;
+	Ogre::Vector3 mCenterPos;
+
 
 	Ogre::Degree mLeftRightAngle;
 	Ogre::Degree mFrontBackAngle;
@@ -84,6 +92,11 @@ protected:
 	bool mCallibrating;
 	Ogre::OverlayElement *mCallibrationText;
     std::function<void()>  mCallibrationFinishedCallback;
+
+		float mXLeftMin, mXLeftMax, mYLeftMin,mYLeftMax;
+	float mXRightMin, mXRightMax, mYRightMin,mYRightMax;
+	float mXLeftMinDif, mXLeftMaxDif, mYLeftMinDif,mYLeftMaxDif;
+	float mXRightMinDif, mXRightMaxDif, mYRightMinDif,mYRightMaxDif;
 
 
 };

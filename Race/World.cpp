@@ -176,11 +176,7 @@ void World::LoadMap(std::string mapName)
 			Ogre::Vector3 diff = mGoalPositions[i+1] - mGoalPositions[i];
 			diff.normalise();
 			Ogre::Quaternion orentation;
-			Ogre::Quaternion correct;
 			orentation.FromAxes( Ogre::Vector3::UNIT_Y.crossProduct(diff), Ogre::Vector3::UNIT_Y,diff);
-			correct.FromAngleAxis(Ogre::Degree(90), Ogre::Vector3::UNIT_X);
-
-			orentation =  orentation * correct;
 			mGoalOrientations.push_back(orentation);
 		}
 		else
@@ -220,7 +216,7 @@ void World::LoadMap(std::string mapName)
 		} 
 		else
 		{
-			goal->setMaterial("goalMaterial2");
+			goal->setMaterial("GoalMat2");
 			goal->setAlpha(0.2f);
 		}
 		//goal->roll(Ogre::Degree(90));
@@ -240,7 +236,7 @@ void World::LoadMap(std::string mapName)
 }
 
 World::World(Ogre::SceneManager *sceneManager, HUD *hud, RaceCamera * cam, Race *base) :
-	mSceneManager(sceneManager), mBase(base), mHUD(hud), mCamera(cam)
+	mSceneManager(sceneManager), mBase(base), mHUD(hud), mCamera(cam), mPlayer(NULL)
 {
 		 mRoll = 0;
 	 mPitch = 0;
@@ -289,6 +285,17 @@ World::World(Ogre::SceneManager *sceneManager, HUD *hud, RaceCamera * cam, Race 
 void World::AddPlayer(Player *p)
 {
 	mPlayer = p;
+}
+
+
+void World::StartGame()
+{
+	if (mPlayer != NULL)
+	{
+		mPlayer->setOrientation(mGoalOrientations[0]);
+		mPlayer->setPosition(mGoalPositions[0] - mPlayer->getFacing() * 300);
+	}
+
 }
 
 // You'll want various methods to access & change your world here
@@ -340,7 +347,7 @@ void World::Think(float time)
 
 	for (int i = 0; i < mNumGoalsToShow; i++)
 	{
-		mGoals[i]->yaw(Ogre::Degree(time * 30));
+		mGoals[i]->roll(Ogre::Degree(time * 30));
 	}
 
 	 Ogre::Vector3 diff = mGoals[0]->getPosition() - mPlayer->getPosition();
@@ -356,18 +363,14 @@ void World::Think(float time)
 
 	  InputHandler *ih = InputHandler::getInstance();
 
-	  if (ih->IsKeyDown(OIS::KC_Q))
+	  if (ih->IsKeyDown(OIS::KC_NUMPAD4))
 	  {
-		  Ogre::Vector3 pos = mArrowNode->getPosition();
-		  pos.y += time;
-		  mArrowNode->setPosition(pos);
+		  mCamera->setOrbitDegree(mCamera->getOrbitDegree() + time*20);
 
 	  }
-	  	  if (ih->IsKeyDown(OIS::KC_A))
+	  if (ih->IsKeyDown(OIS::KC_NUMPAD6))
 	  {
-		  Ogre::Vector3 pos = mArrowNode->getPosition();
-		  pos.y -= time;
-		  mArrowNode->setPosition(pos);
+	  mCamera->setOrbitDegree(mCamera->getOrbitDegree() - time*20);
 	  }
 
 //		  mArrowNode->roll(Ogre::Degree(mRoll));

@@ -31,6 +31,9 @@ public:
 	void Think(float time);
 
 	int worldRand();
+	void StartGame();
+
+	RaceCamera *getCamera() { return mCamera; }
 
 protected:
 

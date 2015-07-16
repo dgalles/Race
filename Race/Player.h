@@ -41,9 +41,13 @@ public:
 	void setMaxSpeed(float newMaxSpeed) { mMaxSpeed = newMaxSpeed;}
 	void reset();
 
+
+	void setOrientation(Ogre::Quaternion newOrientation);
+
+
 protected:
 	void SendData(float time);
-	void updateAnglesFromControls(Ogre::Degree &angle, Ogre::Degree &angle2);
+	void updateAnglesFromControls(Ogre::Degree &angle, Ogre::Degree &angle2, float &xPercent, float &yPercent);
 
 
 	World *mWorld;
@@ -62,5 +66,9 @@ protected:
 	float mMaxSpeed;
 	float mDegreesPerSecond;
 	Ogre::Degree mRollAngle;
+	Ogre::SceneNode *mBarrelSceneNode;
+	Ogre::SceneNode *mTurretSceneNode;
+
+	float mTurretScaleY;
 
 };

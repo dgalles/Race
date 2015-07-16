@@ -10,7 +10,7 @@ HUD::HUD()
 {
 	mShowHUDElems = true;
 	mScoreOverlay = Ogre::OverlayManager::getSingleton().getByName("HUD/Score");
-
+	mScoreOverlay->show();
 	mSpeedText = Ogre::OverlayManager::getSingleton().getOverlayElement("HUD/Score/Panel/Speed");
 
 }

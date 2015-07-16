@@ -139,6 +139,7 @@ void
 
 	mLogger->StartSession( "\"subgame\":\"normal\"");
 	mKinect->StartSession();
+	mWorld->StartGame();
 }
 
 void Race::startRace()

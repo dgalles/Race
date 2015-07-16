@@ -24,6 +24,24 @@ Kinect::Kinect(void)
 
 	mToso1Overlay->setScroll(0.85f, 0.8f);
 	mToso2Overlay->setScroll(0.65f, 0.8f);
+
+	mXLeftMinDif = -0.572413862f; 
+	mXLeftMaxDif = 0.191661924f;
+	mYLeftMinDif = -0.426941812f;
+	mYLeftMaxDif = 0.335171402f;
+
+	mXRightMinDif = -0.217648357f;
+	mXRightMaxDif = 0.530554414f;
+	mYRightMinDif = -0.382603377f;
+	mYRightMaxDif = 0.276229203;
+
+	baseVectorDelta = Ogre::Vector2::ZERO;
+
+	mCallibrated = true;
+
+	mLeftWristPos = Ogre::Vector3(0,mYLeftMinDif,0);
+	mRightWristPos = Ogre::Vector3(0,mYRightMinDif,0);
+	mCenterPos = Ogre::Vector3::ZERO;
 }
 
 
@@ -71,7 +89,8 @@ Kinect::initSensor()
 	{
 		m_hNextSkeletonEvent = CreateEvent( NULL, TRUE, FALSE, NULL );
 
-		hr = m_pNuiSensor->NuiSkeletonTrackingEnable( m_hNextSkeletonEvent, NUI_SKELETON_TRACKING_FLAG_ENABLE_SEATED_SUPPORT );
+//		hr = m_pNuiSensor->NuiSkeletonTrackingEnable( m_hNextSkeletonEvent, NUI_SKELETON_TRACKING_FLAG_ENABLE_SEATED_SUPPORT );
+		hr = m_pNuiSensor->NuiSkeletonTrackingEnable( m_hNextSkeletonEvent, 0 );
 		if( FAILED( hr ) )
 		{
 			return hr;
@@ -100,7 +119,31 @@ void Kinect::EndSession()
 
 }
 
+Ogre::Vector3 Kinect::handPositionAdjusted(bool &usingLeft) 
+{
+	float xPercent;
+	float yPercent;
+	if (mCallibrated)
+	{
+		if ( mLeftWristPos.y > mRightWristPos.y)
+		{
+			usingLeft = true;
+			xPercent =  (mLeftWristPos.x - mCenterPos.x - mXLeftMinDif) / (mXLeftMaxDif - mXLeftMinDif);
+			yPercent =  (mLeftWristPos.y - mCenterPos.y - mYLeftMinDif) / (mYLeftMaxDif - mYLeftMinDif);
+		}
+		else
+		{
+			usingLeft = false;
+			xPercent =  (mRightWristPos.x - mCenterPos.x - mXRightMinDif) / (mXRightMaxDif - mXRightMinDif);
+			yPercent =  (mRightWristPos.y - mCenterPos.y - mYRightMinDif) / (mYRightMaxDif - mYRightMinDif);
 
+		}
+		xPercent = Ogre::Math::Clamp<float>(xPercent,0,1);
+		yPercent = Ogre::Math::Clamp<float>(yPercent,0,1);
+		return Ogre::Vector3(xPercent, yPercent, 0);
+
+	}
+}
 void 
 Kinect::callibrate(float delay, std::function<void(void)> callback)
 {
@@ -264,7 +307,7 @@ Kinect::updateKinectSkeleton()
 			Vector4 rightWrist =  pSkel->SkeletonPositions[NUI_SKELETON_POSITION_WRIST_RIGHT];
 			Vector4 leftHand =  pSkel->SkeletonPositions[NUI_SKELETON_POSITION_HAND_LEFT];
 			Vector4 rightHand =  pSkel->SkeletonPositions[NUI_SKELETON_POSITION_HAND_RIGHT];
-
+			Vector4 hip = pSkel->SkeletonPositions[NUI_SKELETON_POSITION_HIP_CENTER];
 
 			for (int i = 0 ; i < NUI_SKELETON_POSITION_COUNT; i++)
 			{
@@ -277,8 +320,12 @@ Kinect::updateKinectSkeleton()
 			leftVector.normalise();
 			Ogre::Vector2 FrontVector(leftVector.y, -leftVector.x);
 
-			Ogre::Vector2 BaseVector((leftElbow.x + rightElbow.x + leftShoulder.x + rightShoulder.x) / 4,
-				(leftElbow.z + rightElbow.z + leftShoulder.z + rightShoulder.z) / 4);
+			//Ogre::Vector2 BaseVector((leftElbow.x + rightElbow.x + leftShoulder.x + rightShoulder.x) / 4,
+			//	(leftElbow.z + rightElbow.z + leftShoulder.z + rightShoulder.z) / 4);
+
+			Ogre::Vector2 BaseVector(hip.x, hip.z);
+
+
 			if (recenterNext)
 			{
 				recenterNext = false;
@@ -300,6 +347,9 @@ Kinect::updateKinectSkeleton()
 			Ogre::Radian frontBackAngle1 = Ogre::Math::ATan2(ZDisplacement, headPos.y - shoulderPos.y + 0.5f);
 			mFrontBackAngle = frontBackAngle1 * 4;
 
+			mLeftWristPos = Ogre::Vector3(leftWrist.x, leftWrist.y, leftWrist.z);
+			mRightWristPos = Ogre::Vector3(rightWrist.x, rightWrist.y, rightWrist.z);
+			mCenterPos = Ogre::Vector3(shoulderPos.x, shoulderPos.y, shoulderPos.z);
 
 		}
 		else if ( true && SkeletonFrame.SkeletonData[i].eTrackingState == NUI_SKELETON_POSITION_ONLY )

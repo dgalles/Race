@@ -36,7 +36,7 @@ HUD/Score
          left 0.7
          font_name Big
          char_height 0.04
-         colour 1 1 1
+         colour 1 0 0
          caption Speed = 0 m / s
 		}
 		

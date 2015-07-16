@@ -17,6 +17,7 @@ mRenderCamera(renderCamera), mCurrentTrackingObject(0), mReview(false)
 	mCurrentFollowDistance = mDesiredFollowDistance;
 	mCurrentFollowHeight = mDesiredFollowHeight;
 
+	mOrbitDegree = 0;
 	mShakeTime = 0;
 	// Any other initialization that needs to happen
 }
@@ -85,9 +86,18 @@ RaceCamera::Think(float time)
 		float cameraSpeed = 100;
 
 		Ogre::Vector3 delta = mCurrentTrackingObject->getFacing() * -mCurrentFollowDistance;
+
+		if (mOrbitDegree != 0)
+		{
+
+		Ogre::Quaternion rot;
+		rot.FromAngleAxis(Ogre::Degree(mOrbitDegree),Ogre::Vector3::UNIT_Y);
+
+		delta = rot * delta;
+		}
+
 		delta.y = mCurrentFollowHeight;
 
-	
 		
 
 		mRenderCamera->setPosition(trackPos + delta);

@@ -31,6 +31,9 @@ public:
 	void setReview(bool rev) {mReview = rev;}
 	Ogre::Vector3 getPosition() {return mRenderCamera->getPosition();} 
 	Ogre::Quaternion getOrientation() { return mRenderCamera->getOrientation(); }
+
+	float getOrbitDegree() { return mOrbitDegree; }
+	void setOrbitDegree(float orbitDegree) { mOrbitDegree = orbitDegree;}
 protected:
 
     Ogre::Camera *mRenderCamera;
@@ -54,4 +57,5 @@ protected:
 	float mShakePitch;
 	Ogre::Vector3 mShakeOffset;
 	bool mReview;
+	float mOrbitDegree;
 };
