@@ -4,7 +4,7 @@
 #include "Kinect.h"
 #include "Achievements.h"
 #include "InputHandler.h"
-
+#include "HUD.h"
 
 Player::Player(World *world, Kinect *k, Achievements *ach) : 
 	GameObject(GameObject::PLAYER), mWorld(world), mKinect(k), mAchievements(ach)
@@ -12,7 +12,7 @@ Player::Player(World *world, Kinect *k, Achievements *ach) :
 
 	loadModel("Boat1.mesh", mWorld->SceneManager());
 	setScale(10);
-	setPosition(Ogre::Vector3(1500,0,1500));
+	setPosition(Ogre::Vector3(1500,-3,1500));
 	mVelocityDirection = Ogre::Vector3::UNIT_Z;
 	mRollAngle = 0;
 	reset();
@@ -48,6 +48,7 @@ void Player::Think(float time)
 		mSpeed = -mMaxSpeed;
 	}
 
+	mWorld->getHUD()->setSpeed(mSpeed);
 
 
 	if (Ogre::Math::Abs(leftRight) > Ogre::Degree(10))
@@ -82,23 +83,19 @@ void Player::updateAnglesFromControls(Ogre::Degree &angle, Ogre::Degree &angle2)
 
 		if (InputHandler::getInstance()->IsKeyDown(OIS::KC_LEFT))
 		{
-//			roll(Ogre::Degree(1));
 			angle = -Ogre::Degree(30);
 		} 
 		else if (InputHandler::getInstance()->IsKeyDown(OIS::KC_RIGHT))
 		{
-//			roll(Ogre::Degree(-1));
 			angle = Ogre::Degree(30);
 
 		}
 		if (InputHandler::getInstance()->IsKeyDown(OIS::KC_UP))
 		{
-//			yaw(Ogre::Degree(1));
 			angle2 = Ogre::Degree(-30);
 		}
 		else if (InputHandler::getInstance()->IsKeyDown(OIS::KC_DOWN))
 		{
-//			yaw(Ogre::Degree(-1));
 			angle2 = Ogre::Degree(30);
 		}
 		else

@@ -216,15 +216,17 @@ void World::LoadMap(std::string mapName)
 		if (i == 0) 
 		{
 		
-//			goal->setAlpha(1.0f);
+			goal->setAlpha(1.0f);
 		} 
 		else
 		{
-//			goal->setAlpha(0.3f);
+			goal->setMaterial("goalMaterial2");
+			goal->setAlpha(0.2f);
 		}
 		//goal->roll(Ogre::Degree(90));
 		mGoals.push_back(goal);
 	}
+	mGoals[0]->setAlpha(1.0f);
 
 
 	// 	mGoal->setOrientation(mGoal->getOrientation() *);

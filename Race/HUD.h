@@ -18,6 +18,13 @@ public:
 	void update(float time);
     
 	void showRaceOver(bool show);
+	    void setSpeed(int speed, bool ghost = false);
 
+	void showHUDElements(bool show);
 protected:
+
+	bool mShowHUDElems;
+		Ogre::Overlay *mScoreOverlay;
+	Ogre::OverlayElement *mSpeedText;
+
 };

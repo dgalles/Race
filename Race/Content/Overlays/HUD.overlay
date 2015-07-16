@@ -17,95 +17,6 @@ HUD/Score
 {
     zorder 400
 	
-	container Panel(HUD/Armor/Panel)
-    {
-      metrics_mode relative
-
-		left 0.01
-		top 0.79
-		element TextArea(HUD/Armor/Text)
-		{
-			font_name Big
-			char_height 0.04
-			colour 1 1 1
-			top 0.01
-			caption Armor 
-		}
-	
-		container Panel(HUD/Armor/1)
-		{
-			left 0.1
-			top 0
-			width 0.1
-			height 0.05
-			material ArmorMat2	
-		}
-		
-		container Panel(HUD/Armor/2)
-		{
-			left 0.21
-			top 0
-			width 0.1
-			height 0.05
-			material ArmorMat2	
-		}
-
-		container Panel(HUD/Armor/3)
-		{
-			left 0.32
-			top 0
-			width 0.1
-			height 0.05
-			material ArmorMat2	
-		}
-
-		container Panel(HUD/Armor/4)
-		{
-			left 0.43
-			top 0
-			width 0.1
-			height 0.05
-			material ArmorMat2	
-		}
-
-		container Panel(HUD/Armor/5)
-		{
-			left 0.54
-			top 0
-			width 0.1
-			height 0.05
-			material ArmorMat2	
-		}
-
-		container Panel(HUD/Armor/6)
-		{
-			left 0.65
-			top 0
-			width 0.1
-			height 0.05
-			material ArmorMat2	
-		}
-		
-		container Panel(HUD/Armor/7)
-		{
-			left 0.76
-			top 0
-			width 0.1
-			height 0.05
-			material ArmorMat2	
-		}
-		container Panel(HUD/Armor/8)
-		{
-			left 0.87
-			top 0
-			width 0.1
-			height 0.05
-			material ArmorMat2	
-		}
-
-	}
-	
-
 	
     container Panel(HUD/Score/Panel)
     {
@@ -116,26 +27,7 @@ HUD/Score
       width 1
       height 0.1
 		
-		element TextArea(HUD/Score/Panel/Coins)
-		{
-		metrics_mode relative
-		
-         left 0.02
-         font_name Big
-         char_height 0.04
-         colour 1 1 1
-         caption Coins = 0
-		}
-		element TextArea(HUD/Score/Panel/Distance)
-		{
-		metrics_mode relative
-		
-         left 0.3
-         font_name Big
-         char_height 0.04
-         colour 1 1 1
-         caption Distance = 0 meters
-		}
+
 		
 		element TextArea(HUD/Score/Panel/Speed)
 		{
@@ -150,7 +42,7 @@ HUD/Score
 		
     }
 	
-	 container Panel(HUD/Score/GhostPanel)
+	container Panel(HUD/Score/GhostPanel)
     {
       metrics_mode relative
 
@@ -159,16 +51,6 @@ HUD/Score
       width 1
       height 0.1
 		
-		element TextArea(HUD/Score/GhostPanel/Coins)
-		{
-		metrics_mode relative
-		
-         left 0.02
-         font_name Big
-         char_height 0.04
-         colour 1 1 1 0.5
-         caption Coins = 0
-		}
 		element TextArea(HUD/Score/GhostPanel/Distance)
 		{
 		metrics_mode relative
@@ -199,64 +81,6 @@ HUD/Score
 
 
 
-HUD/LeftArrow
-{
-    zorder 200
-	
-    container Panel(HUD/LeftArrow/Panel)
-    {
-      metrics_mode relative
-
-	  left 0.05
-      top 0.05
-      width 0.2
-      height 0.2
-	  material LeftArrow
-    }    
-}
-
-HUD/RightArrow
-{
-
-    container Panel(HUD/RightArrow/Panel)
-    {
-      metrics_mode relative
-
-	  left 0.75
-      top 0.05
-      width 0.2
-      height 0.2
-	  material RightArrow
-    }   
-}
-
-HUD/CenterArrow
-{
-    container Panel(HUD/CenterArrow/Panel)
-    {
-      metrics_mode relative
-
-	  left 0.4
-      top 0.0
-      width 0.2
-      height 0.2
-	  material CenterArrow
-    }   
-}
-
-HUD/UpArrow
-{
-    container Panel(HUD/UpArrow/Panel)
-    {
-      metrics_mode relative
-
-	  left 0.4
-      top 0.0
-      width 0.2
-      height 0.2
-	  material UpArrow
-    }   
-}
 
 
 HUD/Racing/Done
