@@ -1,4 +1,5 @@
 #include "OgreVector3.h"
+#include "OgreQuaternion.h"
 #include <queue>
 #include "Ghost.h"
 
@@ -33,6 +34,8 @@ public:
 
 protected:
 
+	void LoadMap(std::string map);
+
 	Ogre::SceneManager *mSceneManager;
 
 	Race *mBase;
@@ -41,15 +44,17 @@ protected:
 
     std::vector<GameObject *> mDynamicObjects;
     std::vector<GameObject *> mStaticObjects;
-	GameObject *mGoal;
+	std::vector<GameObject *> mGoals;
 	WaterMesh *mWaterMesh;
 	int mSeed;
 	int goalIndex;
 	std::vector<Ogre::Vector3> mGoalPositions;
+	std::vector<Ogre::Quaternion> mGoalOrientations;
 	int mCurrentIndex ;
 	Ogre::SceneNode *mArrowNode;
 	RaceCamera* mCamera;
 	float mRoll;
 	float mPitch;
 	float mYaw;
+	unsigned int mNumGoalsToShow;
 };

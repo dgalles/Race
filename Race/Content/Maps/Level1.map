@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Map>
+	<Config Name="Circle">
+        <Mode>Race</Mode>
+    </Config>
+	
+	<Gates>
+		<Gate Name="Gate#1">
+            <Position X="4000" Y="5" Z="4000" />
+        </Gate>
+        <Gate Name="Gate#2">
+            <Position X="4000" Y="5" Z="4300" />
+        </Gate>
+        <Gate Name="Gate#3">
+            <Position X="4300" Y="5" Z="4600" />
+        </Gate>
+        <Gate Name="Gate#3">
+            <Position X="4600" Y="5" Z="4600" />
+        </Gate>
+		        <Gate Name="Gate#3">
+            <Position X="4600" Y="5" Z="4300" />
+        </Gate>
+		        <Gate Name="Gate#3">
+            <Position X="4100" Y="5" Z="5500" />
+        </Gate>
+		<Gate Name="Gate#3">
+            <Position X="4000" Y="5" Z="5800" />
+		</Gate>
+
+ 		 <Gate Name="Gate#3">
+            <Position X="3900" Y="5" Z="6100" />
+        </Gate>
+
+        <Gate Name="Gate#4">
+            <Position X="4000" Y="5" Z="4000" />
+        </Gate>
+	</Gates>
+	<Walls>
+
+        <Wall Name="Wall#1">
+            <Position X="3000" Y="0" Z="3000" />
+			<Rotation> 30.0</Rotation>
+			<Scale>43</Scale>
+			<Model>Iceberg1.mesh</Model>
+        </Wall>
+	</Walls>		
+</Map>

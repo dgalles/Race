@@ -61,5 +61,6 @@ protected:
 	float mSpeed;
 	float mMaxSpeed;
 	float mDegreesPerSecond;
+	Ogre::Degree mRollAngle;
 
 };

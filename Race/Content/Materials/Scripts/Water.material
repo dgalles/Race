@@ -34,3 +34,26 @@ material Water/Water2
 		}
 	}
 }
+
+
+material Examples/Water8
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			cull_hardware none
+			cull_software none
+
+			texture_unit
+			{
+				cubic_texture cloudy_noon.jpg combinedUVW
+				tex_address_mode clamp
+				env_map cubic_reflection
+			}
+		}
+	}
+}

@@ -280,7 +280,7 @@ Race::setupMenus(bool loginRequired)
 	Achievements *a = mAchievements;
 	SoundBank *sb = SoundBank::getInstance();
 	Logger *lm = mLogger;
-
+	Player *p = mPlayer;
 
     Menu *mainMenu = new Menu("Main Menu", "main", 0.05f, 0.1f, 0.08f);
     Menu *options = new Menu("Options", "options", 0.05f, 0.1f, 0.1f, mainMenu);
@@ -355,8 +355,8 @@ Race::setupMenus(bool loginRequired)
     controlOptions->AddChooseFloat("Kinect Sensitivity Front / Back", [](float x) { }, 0.7f, 1.5f, 1.f, 0.1f, true);
     controlOptions->AddSelectElement("Callibrate Kinect Now", [controlOptions, k]() {controlOptions->disable(); k->callibrate(4.0f, [controlOptions]() {controlOptions->enable();});});
     controlOptions->AddChooseBool("Invert Front/Back Controls", [](bool x) { },false, true);
-//	controlOptions->AddChooseBool("Enable Kinect", [p](bool x) { p->setEnableKinect(x);  if (!x) p->setAutoCallibrate(false); }, p->getEnableKinect(), true);/
-//	controlOptions->AddChooseBool("Enable Keyboard", [p](bool x) { p->setEnableKeyboard(x);}, p->getEnableKeyboard(), true);
+	controlOptions->AddChooseBool("Enable Kinect", [p](bool x) { p->setEnableKinect(x);  }, p->getEnableKinect(), true);
+	controlOptions->AddChooseBool("Enable Keyboard", [p](bool x) { p->setEnableKeyboard(x);}, p->getEnableKeyboard(), true);
 	// controlOptions->AddChooseBool("Enable Gamepad", [p](bool x) { p->setEnableGamepad(x);}, p->getEnableGamepad());
 
 

@@ -135,6 +135,7 @@ copy  ServerConfig.txt "$(OutDir)"</Command>
     <ClInclude Include="AIManager.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CollisionManager.h" />
+    <ClInclude Include="FileUtil.h" />
     <ClInclude Include="FrameCounter.h" />
     <ClInclude Include="HUD.h" />
     <ClInclude Include="InputHandler.h" />
@@ -149,6 +150,8 @@ copy  ServerConfig.txt "$(OutDir)"</Command>
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="Store.h" />
+    <ClInclude Include="tinystr.h" />
+    <ClInclude Include="tinyxml.h" />
     <ClInclude Include="WaterMesh.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>
@@ -157,6 +160,7 @@ copy  ServerConfig.txt "$(OutDir)"</Command>
     <ClCompile Include="AIManager.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
+    <ClCompile Include="FileUtil.cpp" />
     <ClCompile Include="FrameCounter.cpp" />
     <ClCompile Include="HUD.cpp" />
     <ClCompile Include="InputHandler.cpp" />
@@ -171,6 +175,10 @@ copy  ServerConfig.txt "$(OutDir)"</Command>
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="Store.cpp" />
+    <ClCompile Include="tinystr.cpp" />
+    <ClCompile Include="tinyxml.cpp" />
+    <ClCompile Include="tinyxmlerror.cpp" />
+    <ClCompile Include="tinyxmlparser.cpp" />
     <ClCompile Include="WaterMesh.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>

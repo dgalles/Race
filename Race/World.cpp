@@ -12,12 +12,14 @@
 #include "InputHandler.h"
 #include "OgreQuaternion.h"
 #include "Camera.h"
+#include "tinyxml.h"
+#include "FileUtil.h"
 
 #define MESH_NAME "WaterMesh"
 #define ENTITY_NAME "WaterEntity"
-#define MATERIAL_NAME "Water/Water2"
+#define MATERIAL_NAME "Examples/Water8"
 #define COMPLEXITY 128 		// watch out - number of polys is 2*ACCURACY*ACCURACY !
-#define PLANE_SIZE 8000.0f
+#define PLANE_SIZE 8000
 
 int World::worldRand() 
 {
@@ -40,6 +42,200 @@ float positions[] = {4000,5,4000,
 	                5000,5,5000,
 					5000,5,4000};
 
+
+
+bool getSafeString(TiXmlElement *elem, char *name,const char* &c, const char *default = "")
+{
+	if (elem->FirstChildElement(name))
+	{
+		c = elem->FirstChildElement(name)->GetText();
+	}
+	else
+	{
+		c = default;
+	}
+	return true;
+}
+
+bool getSafeVector3(TiXmlElement *elem, char *name,Ogre::Vector3 &vec)
+{
+	if (elem->FirstChildElement(name))
+	{
+		double posX = 0, posY = 0, posZ = 0;
+		if (!elem->FirstChildElement(name)->Attribute("X", &posX))
+		{
+			return false;
+		}
+		if (!elem->FirstChildElement(name)->Attribute("Y", &posY))
+		{
+			return false;
+		}
+		if (!elem->FirstChildElement(name)->Attribute("Z", &posZ))
+		{
+			return false;
+		}
+		vec = Ogre::Vector3((float) posX,(float) posY,(float) posZ);
+		return true;
+	}
+	return false;
+}
+bool getSafeFloat(TiXmlElement *elem, char *name,float &floatVal)
+{
+	if (elem->FirstChildElement(name))
+	{
+		floatVal = (float) atof(elem->FirstChildElement(name)->GetText());
+			return true;
+
+	}
+	return false;
+}
+
+void World::LoadMap(std::string mapName)
+{
+	TiXmlDocument doc(FileUtil::getFullPath(mapName + ".map").c_str());
+	if(!doc.LoadFile(TIXML_ENCODING_UTF8)) {
+		return;
+	}
+		TiXmlHandle hDoc(&doc);
+	TiXmlElement *map;
+	TiXmlHandle hRoot(0);
+
+	// <Map>
+	map = hDoc.FirstChildElement().Element();
+	if (!map)
+		return;
+	hRoot = TiXmlHandle(map);
+
+
+
+
+
+
+
+	GameObject *wall = new GameObject(GameObject::STATIC_OBJECT, "TankWall.mesh", mSceneManager,Ogre::Vector3(4000,-50,8000), Ogre::Quaternion::IDENTITY);
+	wall->setScale(8);
+	mStaticObjects.push_back(wall);
+
+	wall = new GameObject(GameObject::STATIC_OBJECT, "TankWall.mesh", mSceneManager,Ogre::Vector3(4000,-50,0), Ogre::Quaternion::IDENTITY);
+	wall->setScale(8);
+	mStaticObjects.push_back(wall);
+
+	wall = new GameObject(GameObject::STATIC_OBJECT, "TankWall.mesh", mSceneManager,Ogre::Vector3(0,-50,4000), Ogre::Quaternion::IDENTITY);
+	wall->setScale(8);
+	wall->yaw(Ogre::Degree(90));
+	mStaticObjects.push_back(wall);
+
+
+	wall = new GameObject(GameObject::STATIC_OBJECT, "TankWall.mesh", mSceneManager,Ogre::Vector3(8000,-50,4000), Ogre::Quaternion::IDENTITY);
+	wall->setScale(8);
+	wall->yaw(Ogre::Degree(90));
+	mStaticObjects.push_back(wall);
+
+
+
+	
+	TiXmlElement *Obsticales = hRoot.FirstChildElement("Walls").Element();
+	
+	for (TiXmlElement *obs = Obsticales->FirstChildElement(); obs; obs = obs->NextSiblingElement()) 
+	{
+
+		// time
+		float rotation = 0.0f;
+		float scale = 1.0f;
+		Ogre::Vector3 nextPos(0.0f);
+		getSafeFloat(obs, "Rotation", rotation);
+		getSafeFloat(obs, "Scale", scale);
+		const char *modelName = "Iceberg1.mesh";
+		getSafeString(obs, "Model", modelName,  "Iceberg1.mesh");
+		getSafeVector3(obs, "Position", nextPos);
+
+		wall = new GameObject(GameObject::STATIC_OBJECT,modelName, mSceneManager, nextPos, Ogre::Quaternion::IDENTITY);
+		wall->yaw(Ogre::Degree(rotation));
+		wall->setScale(scale);
+		mStaticObjects.push_back(wall);
+	}
+
+
+
+		TiXmlElement *gates = hRoot.FirstChildElement("Gates").Element();
+	
+	for (TiXmlElement *gate = gates->FirstChildElement(); gate; gate = gate->NextSiblingElement()) 
+	{
+
+		// time
+		Ogre::Vector3 nextPos(0.0f);
+		Ogre::Quaternion orent = Ogre::Quaternion::IDENTITY;
+		getSafeVector3(gate, "Position", nextPos);
+		mGoalPositions.push_back(nextPos);
+
+	}
+	for (unsigned int i = 0; i < mGoalPositions.size(); i++)
+	{
+		if (i < mGoalPositions.size() - 1)
+		{
+			Ogre::Vector3 diff = mGoalPositions[i+1] - mGoalPositions[i];
+			diff.normalise();
+			Ogre::Quaternion orentation;
+			Ogre::Quaternion correct;
+			orentation.FromAxes( Ogre::Vector3::UNIT_Y.crossProduct(diff), Ogre::Vector3::UNIT_Y,diff);
+			correct.FromAngleAxis(Ogre::Degree(90), Ogre::Vector3::UNIT_X);
+
+			orentation =  orentation * correct;
+			mGoalOrientations.push_back(orentation);
+		}
+		else
+		{
+			Ogre::Vector3 diff = mGoalPositions[i] - mGoalPositions[i-1];
+			diff.normalise();
+			Ogre::Quaternion orentation;
+			Ogre::Quaternion correct;
+			orentation.FromAxes( Ogre::Vector3::UNIT_Y.crossProduct(diff), Ogre::Vector3::UNIT_Y,diff);
+			correct.FromAngleAxis(Ogre::Degree(90), Ogre::Vector3::UNIT_X);
+
+			orentation =  orentation * correct;
+			mGoalOrientations.push_back(orentation);
+		}
+	}
+
+
+	//for (int i = 0; i < 100; i++)
+	//{
+	//	Ogre::Vector3 nextPos(worldRand()  * 8000 / (float) RAND_MAX, 0, worldRand()  * 8000 / (float) RAND_MAX);
+	//	wall = new GameObject(GameObject::STATIC_OBJECT,"Iceberg1.mesh", mSceneManager, nextPos, Ogre::Quaternion::IDENTITY);
+	//	wall->yaw(Ogre::Degree((worldRand() / (float) RAND_MAX) * 360));
+	//	wall->setScale(30);
+	//	mStaticObjects.push_back(wall);
+	//}
+
+
+
+	for (unsigned int i = 0; i < mNumGoalsToShow && i < mGoalPositions.size(); i++)
+	{
+		GameObject *goal = new GameObject(GameObject::GATE, "Goal.mesh",  mSceneManager,mGoalPositions[i],  mGoalOrientations[i]);
+		goal->setScale(60);
+		if (i == 0) 
+		{
+		
+//			goal->setAlpha(1.0f);
+		} 
+		else
+		{
+//			goal->setAlpha(0.3f);
+		}
+		//goal->roll(Ogre::Degree(90));
+		mGoals.push_back(goal);
+	}
+
+
+	// 	mGoal->setOrientation(mGoal->getOrientation() *);
+
+
+
+
+	mCurrentIndex = 0;
+
+
+}
 
 World::World(Ogre::SceneManager *sceneManager, HUD *hud, RaceCamera * cam, Race *base) :
 	mSceneManager(sceneManager), mBase(base), mHUD(hud), mCamera(cam)
@@ -75,51 +271,15 @@ World::World(Ogre::SceneManager *sceneManager, HUD *hud, RaceCamera * cam, Race 
 	mWaterMesh->PARAM_D = 0.4f;
 	mWaterMesh->PARAM_T = 0.13f;
 	mWaterMesh->PARAM_U = 0.05f;
+	mNumGoalsToShow = 3;
 
-	GameObject *wall = new GameObject(GameObject::STATIC_OBJECT, "TankWall.mesh", mSceneManager,Ogre::Vector3(4000,-50,8000), Ogre::Quaternion::IDENTITY);
-	wall->setScale(8);
-	mStaticObjects.push_back(wall);
-
-	wall = new GameObject(GameObject::STATIC_OBJECT, "TankWall.mesh", mSceneManager,Ogre::Vector3(4000,-50,0), Ogre::Quaternion::IDENTITY);
-	wall->setScale(8);
-	mStaticObjects.push_back(wall);
-
-	wall = new GameObject(GameObject::STATIC_OBJECT, "TankWall.mesh", mSceneManager,Ogre::Vector3(0,-50,4000), Ogre::Quaternion::IDENTITY);
-	wall->setScale(8);
-	wall->yaw(Ogre::Degree(90));
-	mStaticObjects.push_back(wall);
-
-
-	wall = new GameObject(GameObject::STATIC_OBJECT, "TankWall.mesh", mSceneManager,Ogre::Vector3(8000,-50,4000), Ogre::Quaternion::IDENTITY);
-	wall->setScale(8);
-	wall->yaw(Ogre::Degree(90));
-	mStaticObjects.push_back(wall);
-
-
-	for (int i = 0; i < 100; i++)
-	{
-		Ogre::Vector3 nextPos(worldRand()  * 8000 / (float) RAND_MAX, 0, worldRand()  * 8000 / (float) RAND_MAX);
-		wall = new GameObject(GameObject::STATIC_OBJECT,"Iceberg1.mesh", mSceneManager, nextPos, Ogre::Quaternion::IDENTITY);
-		wall->yaw(Ogre::Degree((worldRand() / (float) RAND_MAX) * 360));
-		wall->setScale(30);
-		mStaticObjects.push_back(wall);
-	}
+	LoadMap("Level1");
 
 
 
-	mGoal = new GameObject(GameObject::GATE, "Goal.mesh",  mSceneManager,Ogre::Vector3(4000,5,4000), Ogre::Quaternion::IDENTITY);
-	mGoal->setScale(15);
-	mGoal->setAlpha(0.5f);
-	mGoal->roll(Ogre::Degree(90));
 
 	mSceneManager->setSkyBox(true, "Skybox/Cloudy");
 
-	for (int i = 0; i < 4; i++)
-	{
-		mGoalPositions.push_back(Ogre::Vector3(positions[i*3], positions[i*3+1], positions[i*3+2]));
-	}
-
-	mCurrentIndex = 0;
 
 }
 
@@ -148,26 +308,40 @@ void World::Think(float time)
 	float WaterPlaneX = mPlayer->getPosition().x ;
 	float WaterPlaneZ = mPlayer->getPosition().z;
 
-	if (mPlayer->getSpeed() > 4)
+	if( Math::Abs(mPlayer->getSpeed()) > 4)
 	{
-		float displacement = -(Math::Abs(mPlayer->getSpeed()) / (mPlayer->getMaxSpeed() * 10.0f));
-		mWaterMesh->push(WaterPlaneX * COMPLEXITY / PLANE_SIZE,WaterPlaneZ * COMPLEXITY / PLANE_SIZE, displacement,true);
+		float displacement = -1 * (Math::Abs(mPlayer->getSpeed()) / (mPlayer->getMaxSpeed() * 5) );
+		mWaterMesh->push(WaterPlaneX * COMPLEXITY / PLANE_SIZE,WaterPlaneZ * COMPLEXITY / PLANE_SIZE, displacement);
 	}
 
-	//mWaterMesh->updateMesh(time);
+	mWaterMesh->updateMesh(time);
 
-	if (mPlayer->collides(mGoal))
+	if (mPlayer->collides(mGoals[0]))
 	{
 		mCurrentIndex++;
-		if (mCurrentIndex >= mGoalPositions.size())
+		if (mCurrentIndex >= (int) mGoalPositions.size())
 		{
 			mCurrentIndex = 0;
 		}
-		mGoal->setPosition(mGoalPositions[mCurrentIndex]);
-	}
-     mGoal->pitch(Ogre::Degree(time * 30));
+		for (int i = 0; i < mNumGoalsToShow; i++)
+		{
+			int index = (mCurrentIndex + i) % mGoalPositions.size();
+		mGoals[i]->setPosition(mGoalPositions[index]);
+		mGoals[i]->setOrientation(mGoalOrientations[index]);
+		//mGoals[i]->roll(Ogre::Degree(90));
 
-	 Ogre::Vector3 diff = mGoal->getPosition() - mPlayer->getPosition();
+		}
+
+
+
+	}
+
+	for (int i = 0; i < mNumGoalsToShow; i++)
+	{
+		mGoals[i]->yaw(Ogre::Degree(time * 30));
+	}
+
+	 Ogre::Vector3 diff = mGoals[0]->getPosition() - mPlayer->getPosition();
 	 diff = mCamera->getOrientation().Inverse() *diff;
 	 diff.y = 0;
 
