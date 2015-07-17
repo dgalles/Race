@@ -5,7 +5,7 @@
     </Config>
 	
 	<Gates>
-		<Gate>
+		  <Gate>
             <Position X="4000" Y="0" Z="1000" />
         </Gate>
         <Gate>
@@ -30,7 +30,7 @@
             <Position X="3000" Y="0" Z="3500" />
 		</Gate>
 		<Gate>
-            <Position X="4000" Y="0" Z="3500" />
+            <Position X="4000" Y="0" Z="3000" />
 		</Gate>
 		
 		
@@ -48,7 +48,7 @@
 		</Gate>
 
 		<Gate>
-            <Position X="5500" Y="0" Z="3000" />
+            <Position X="6000" Y="0" Z="3000" />
 		</Gate>
 		<Gate>
             <Position X="5500" Y="0" Z="3500" />
@@ -63,22 +63,30 @@
             <Position X="3500" Y="0" Z="4500" />
 		</Gate>
 		<Gate>
-            <Position X="4000" Y="0" Z="5000" />
+            <Position X="3500" Y="0" Z="5000" />
 		</Gate>
 		<Gate>
-            <Position X="5000" Y="0" Z="5000" />
+            <Position X="4500" Y="0" Z="5500" />
 		</Gate>
 		<Gate>
             <Position X="5500" Y="0" Z="5500" />
 		</Gate>
 		<Gate>
-            <Position X="5000" Y="0" Z="6000" />
+            <Position X="6000" Y="0" Z="6000" />
 		</Gate>
+
+    <Gate>
+      <Position X="6000" Y="0" Z="6500" />
+    </Gate>
+
+    
+    
+    
+
+
+
 		<Gate>
-            <Position X="4000" Y="0" Z="6000" />
-		</Gate>
-		<Gate>
-            <Position X="3500" Y="0" Z="5500" />
+            <Position X="3500" Y="0" Z="6000" />
 		</Gate>
 				<Gate>
             <Position X="2500" Y="0" Z="5500" />
