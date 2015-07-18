@@ -16,6 +16,67 @@ material simpleRed
    }
 }
 
+material LaserMaterial
+{
+    transparency_casts_shadows on
+    receive_shadows on
+	
+    technique
+    {
+        pass
+        {
+			alpha_rejection greater 150
+			scene_blend alpha_blend
+
+		    cull_hardware none
+            cull_software none
+
+            texture_unit
+            {
+				tex_address_mode clamp
+                texture laser.png
+            }
+        }
+    }
+}
+
+
+material LaserMaterial2
+{
+   technique
+   {
+     pass
+     {
+       scene_blend alpha_blend
+ 
+       texture_unit
+       {
+         colour_op_ex source1 src_manual src_current 1 0 0
+         alpha_op_ex source1 src_manual src_current 0.3
+       }
+     }
+   }
+}
+
+
+material Basic/Flare
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			diffuse vertexcolour
+
+			texture_unit
+			{
+				texture flare.png
+			}
+		}
+	}
+}
 
 material blueSemiTrans
 {

@@ -49,6 +49,8 @@ public:
     bool collides(GameObject *other, Ogre::Vector3 &MTD);
     bool collides(const GameObject &other, Ogre::Vector3 &MTD);
 
+	bool collides(Ogre::Vector3 start, Ogre::Vector3 direction, float &collidePos);
+
 	Ogre::Vector3 minPointLocalScaled();
 	Ogre::Vector3 maxPointLocalScaled();
 

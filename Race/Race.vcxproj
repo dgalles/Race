@@ -72,6 +72,8 @@ copy "$(OGRE_HOME)\bin\$(Configuration)\RenderSystem_GL_d.dll" "$(OutDir)"
 copy "$(OGRE_HOME)\bin\$(Configuration)\Plugin_OctreeZone_d.dll" "$(OutDir)"
 copy "$(OGRE_HOME)\bin\$(Configuration)\Plugin_OctreeSceneManager_d.dll" "$(OutDir)"
 copy "$(OGRE_HOME)\bin\$(Configuration)\Plugin_PCZSceneManager_d.dll" "$(OutDir)"
+copy "$(OGRE_HOME)\bin\$(Configuration)\Plugin_ParticleFX_d.dll" "$(OutDir)"
+
 copy "..\SDL2-2.0.3\lib\x86\SDL2.dll" "$(OutDir)"
 copy "..\SDL2_mixer-2.0.0\lib\x86\SDL2_mixer.dll" "$(OutDir)"
 copy "..\SDL2_mixer-2.0.0\lib\x86\libogg-0.dll" "$(OutDir)"
@@ -116,6 +118,8 @@ copy "$(OGRE_HOME)\bin\$(Configuration)\RenderSystem_GL.dll" "$(OutDir)"
 copy "$(OGRE_HOME)\bin\$(Configuration)\Plugin_OctreeZone.dll" "$(OutDir)"
 copy "$(OGRE_HOME)\bin\$(Configuration)\Plugin_OctreeSceneManager.dll" "$(OutDir)"
 copy "$(OGRE_HOME)\bin\$(Configuration)\Plugin_PCZSceneManager.dll" "$(OutDir)"
+copy "$(OGRE_HOME)\bin\$(Configuration)\Plugin_ParticleFX.dll" "$(OutDir)"
+
 copy "..\SDL2-2.0.3\lib\x86\SDL2.dll" "$(OutDir)"
 copy "..\SDL2_mixer-2.0.0\lib\x86\SDL2_mixer.dll" "$(OutDir)"
 copy "..\SDL2_mixer-2.0.0\lib\x86\libogg-0.dll" "$(OutDir)"
@@ -135,6 +139,7 @@ copy  ServerConfig.txt "$(OutDir)"</Command>
     <ClInclude Include="AIManager.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CollisionManager.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="FileUtil.h" />
     <ClInclude Include="FrameCounter.h" />
     <ClInclude Include="HUD.h" />
@@ -160,6 +165,7 @@ copy  ServerConfig.txt "$(OutDir)"</Command>
     <ClCompile Include="AIManager.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="FileUtil.cpp" />
     <ClCompile Include="FrameCounter.cpp" />
     <ClCompile Include="HUD.cpp" />

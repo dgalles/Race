@@ -51,19 +51,28 @@ GameObject::~GameObject(void)
 bool GameObject::collides(GameObject *other)
 {
 	Ogre::Vector3 MTD;
-    return mCollision->collides(other->mCollision, MTD);
+	return mCollision->collides(other->mCollision, MTD);
 }
 
 
 
 bool GameObject::collides(GameObject *other, Ogre::Vector3 &MTD)
 {
-    return mCollision->collides(other->mCollision, MTD);
+	return mCollision->collides(other->mCollision, MTD);
 
 }
+
+
+bool  GameObject::collides(Ogre::Vector3 start, Ogre::Vector3 direction, float &collidePos)
+{
+	return mCollision->collides(start, direction, collidePos);
+
+}
+
+
 bool GameObject::collides(const GameObject &other, Ogre::Vector3 &MTD)
 {
-    return mCollision->collides(other.mCollision, MTD);
+	return mCollision->collides(other.mCollision, MTD);
 }
 
 

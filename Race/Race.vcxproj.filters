@@ -76,6 +76,9 @@
     <ClCompile Include="tinyxmlparser.cpp">
       <Filter>Library Source</Filter>
     </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>Game Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AIManager.h">
@@ -146,6 +149,9 @@
     </ClInclude>
     <ClInclude Include="FileUtil.h">
       <Filter>Library Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>Game Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

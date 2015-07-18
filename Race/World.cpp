@@ -14,6 +14,7 @@
 #include "Camera.h"
 #include "tinyxml.h"
 #include "FileUtil.h"
+#include "AIManager.h"
 
 #define MESH_NAME "WaterMesh"
 #define ENTITY_NAME "WaterEntity"
@@ -157,7 +158,28 @@ void World::LoadMap(std::string mapName)
 
 
 
-		TiXmlElement *gates = hRoot.FirstChildElement("Gates").Element();
+
+	TiXmlElement *Enemies = hRoot.FirstChildElement("Enemies").Element();
+
+	if (Enemies != NULL)
+	{
+		for (TiXmlElement *enemy = Enemies->FirstChildElement(); enemy; enemy = enemy->NextSiblingElement()) 
+		{
+			float scale = 1.0f;
+			Ogre::Vector3 nextPos(0.0f);
+			getSafeFloat(enemy, "Scale", scale);
+			const char *modelName;
+			const char *type = enemy->Value();
+
+			getSafeString(enemy, "Model", modelName, 0);
+			getSafeVector3(enemy, "Position", nextPos);
+
+			mAIManager->AddEnemy(type, nextPos,modelName, scale);
+		}
+	}
+
+
+	TiXmlElement *gates = hRoot.FirstChildElement("Gates").Element();
 	
 	for (TiXmlElement *gate = gates->FirstChildElement(); gate; gate = gate->NextSiblingElement()) 
 	{
@@ -242,7 +264,7 @@ World::World(Ogre::SceneManager *sceneManager, HUD *hud, RaceCamera * cam, Race 
 	 mPitch = 0;
 	 mYaw = 0;
 	mSceneManager->setAmbientLight(Ogre::ColourValue(1,1,1));
-
+	mGameRunning = false;
 	Ogre::OverlayManager *om = Ogre::OverlayManager::getSingletonPtr();
 	Ogre::Overlay *arrowOverlay = om->getByName("HUD/ArrowDirection");
 
@@ -256,7 +278,7 @@ World::World(Ogre::SceneManager *sceneManager, HUD *hud, RaceCamera * cam, Race 
 	mArrowNode->setPosition(0, 3.3f,-10);
 	mArrowNode->pitch(Ogre::Degree(-90));
 	mArrowNode->roll(Ogre::Degree(90));
-
+	mWorldLoaded = false;
 
 	mWaterMesh = new WaterMesh(MESH_NAME, PLANE_SIZE, COMPLEXITY);
 	Ogre::Entity *waterEntity = mSceneManager->createEntity(ENTITY_NAME,
@@ -271,7 +293,6 @@ World::World(Ogre::SceneManager *sceneManager, HUD *hud, RaceCamera * cam, Race 
 	mWaterMesh->PARAM_U = 0.05f;
 	mNumGoalsToShow = 3;
 
-	LoadMap("Level1");
 
 
 
@@ -290,6 +311,12 @@ void World::AddPlayer(Player *p)
 
 void World::StartGame()
 {
+	if (!mWorldLoaded)
+	{
+		LoadMap("Level1");
+		mWorldLoaded = true;
+	}
+	mGameRunning = true;
 	if (mPlayer != NULL)
 	{
 		mPlayer->setOrientation(mGoalOrientations[0]);
@@ -302,7 +329,10 @@ void World::StartGame()
 
 void World::Think(float time)
 {
-
+	if (!mGameRunning)
+	{
+		return;
+	}
 	mPlayer->translate(mPlayer->getVelocity() * time);
 
 	for (std::vector<GameObject*>::iterator it = mStaticObjects.begin(); it != mStaticObjects.end(); it++)
@@ -332,7 +362,7 @@ void World::Think(float time)
 		{
 			mCurrentIndex = 0;
 		}
-		for (int i = 0; i < mNumGoalsToShow; i++)
+		for (unsigned int i = 0; i < mNumGoalsToShow; i++)
 		{
 			int index = (mCurrentIndex + i) % mGoalPositions.size();
 		mGoals[i]->setPosition(mGoalPositions[index]);
@@ -340,12 +370,18 @@ void World::Think(float time)
 		//mGoals[i]->roll(Ogre::Degree(90));
 
 		}
-
-
-
 	}
 
-	for (int i = 0; i < mNumGoalsToShow; i++)
+	Ogre::Vector3 laserStart;
+	Ogre::Vector3 laserDirection;
+
+	if (mPlayer->isFiringLaser())
+	{
+		mPlayer->getLaser(laserStart, laserDirection);
+		mAIManager->rayCollision(laserStart,laserDirection);
+	}
+
+	for (unsigned int i = 0; i < mNumGoalsToShow; i++)
 	{
 		mGoals[i]->roll(Ogre::Degree(time * 30));
 	}

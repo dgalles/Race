@@ -4,6 +4,34 @@
         <Mode>Race</Mode>
     </Config>
 	
+	<Enemies>
+		<Target>
+		    <Type>Target</Type>
+            <Position X="4000" Y="50" Z="1300" />
+			<Scale>20</Scale>
+			<Model>Target.mesh</Model>		
+		</Target>
+	
+    
+    		<Target>
+		    <Type>Target</Type>
+            <Position X="4100" Y="50" Z="1300" />
+			<Scale>20</Scale>
+			<Model>Target.mesh</Model>		
+		</Target>
+	
+    		<Target>
+		    <Type>Target</Type>
+            <Position X="3900" Y="50" Z="1300" />
+			<Scale>20</Scale>
+			<Model>Target.mesh</Model>		
+		</Target>
+	
+	
+	</Enemies>
+	
+	
+	
 	<Gates>
 		  <Gate>
             <Position X="4000" Y="0" Z="1000" />

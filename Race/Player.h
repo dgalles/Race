@@ -41,17 +41,25 @@ public:
 	void setMaxSpeed(float newMaxSpeed) { mMaxSpeed = newMaxSpeed;}
 	void reset();
 
-
+	void setStopOnFiring(bool stopOnFiring) { mStopOnFiring = stopOnFiring;}
+	bool getStopOnFiring() { return mStopOnFiring; }
 	void setOrientation(Ogre::Quaternion newOrientation);
+
+	void getLaser(Ogre::Vector3 &startPos, Ogre::Vector3 &direction);
+
+	bool isFiringLaser() { return mIsFiringLaser; }
 
 
 protected:
 	void SendData(float time);
-	void updateAnglesFromControls(Ogre::Degree &angle, Ogre::Degree &angle2, float &xPercent, float &yPercent);
+	void updateAnglesFromControls(Ogre::Degree &angle, Ogre::Degree &angle2, float &xPercent, float &yPercent, float time);
 
+	void createLaserMesh(void);
 
 	World *mWorld;
 	Kinect *mKinect;
+	bool mIsFiringLaser;
+
 
 	bool mEnableKinect;
 	bool mEnableKeyboard;
@@ -68,6 +76,11 @@ protected:
 	Ogre::Degree mRollAngle;
 	Ogre::SceneNode *mBarrelSceneNode;
 	Ogre::SceneNode *mTurretSceneNode;
+	Ogre::SceneNode *mLaserSceneNode;
+	bool mStopOnFiring;
+
+	float mCurrentYPercent;
+	float mCurrentXPercent;
 
 	float mTurretScaleY;
 

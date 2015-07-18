@@ -3,6 +3,32 @@
 
 
 
+bool RaySlabIntersect(float start, float dir, float min, float max, float& tfirst, float& tlast)
+{
+	if (fabs(dir) < 1.0E-8)
+	{
+		return (start < max && start > min);
+	}
+
+	float tmin = (min - start) / dir;
+	float tmax = (max - start) / dir;
+	if (tmin > tmax)
+	{
+		float tmp = tmin;
+		tmin = tmax;
+		tmax = tmp;
+	}
+
+	if (tmax < tfirst || tmin > tlast)
+		return false;
+
+	if (tmin > tfirst) tfirst = tmin;
+	if (tmax < tlast)  tlast  = tmax;
+	return true;
+}
+
+
+
 OBB::OBB(Ogre::AxisAlignedBox b) : mNormals(3), mPointsGlobal(8), mPointsLocal(8)
 {
 	mScale = Ogre::Vector3::UNIT_SCALE;
@@ -129,6 +155,37 @@ bool testIntersect(Ogre::Vector3 normal, const std::vector<Ogre::Vector3> &point
             MTD = normal * ((float) minOverlap);
         }
         return true;
+}
+
+
+bool  OBB::collides(Ogre::Vector3 rayStarting, Ogre::Vector3 rayDirection,float &collisionAlongRay)
+{
+	if (mGlobalPointsDirty)
+	{
+		setNormals();
+		resetAABBandPoints();
+		mGlobalPointsDirty = false;
+	}
+
+
+	float tfirst = 0.0f, tlast = std::numeric_limits<float>::max();
+
+
+	Ogre::Vector3 v = mPointsGlobal[0];
+	float f = v.x;
+
+	float f2 = mPointsGlobal[0].x;
+
+
+   if (!RaySlabIntersect((-mOrientation * rayStarting).x, -(mOrientation * rayDirection).x, (mPointsGlobal[0].x) , mPointsGlobal[7].x, tfirst, tlast)) return false;
+   if (!RaySlabIntersect((-mOrientation * rayStarting).y, -(mOrientation * rayDirection).y, (mPointsGlobal[0].y), mPointsGlobal[7].y, tfirst, tlast)) return false;
+   if (!RaySlabIntersect((-mOrientation * rayStarting).z, -(mOrientation * rayDirection).z, (mPointsGlobal[0].z) , mPointsGlobal[7].z, tfirst, tlast)) return false;
+
+    collisionAlongRay = tfirst;
+    return true;
+
+
+
 }
 
 

@@ -107,8 +107,10 @@ Race::createScene()
 	mAchievements = new Achievements("Achievements.txt");
 	mRaceCamera = new RaceCamera(mCamera);
 	mWorld = new World(mSceneMgr, mHUD, mRaceCamera, this);
-	//mWorld[1] = new World(mSceneMgr, mHUD, this, true, mWorld[0]->trackPath);
-	//mRaceCamera[1] = new RaceCamera(mCamera[1], mWorld[1]);
+	mAIManager = new AIManager(mWorld,mSceneMgr);
+
+	mWorld->AddAIManager(mAIManager);
+
 	InputHandler::getInstance()->initialize(mWindow);
 	InputHandler::getInstance()->setEventCallback(MenuManager::getInstance());
 
@@ -342,6 +344,7 @@ Race::setupMenus(bool loginRequired)
 
    
 
+    gameplayOptions->AddChooseBool("Stop When Firing", [p ](bool x) { p->setStopOnFiring(x);},p->getStopOnFiring(), true);
 	gameplayOptions->AddSelectElement("Return to Options Menu", [gameplayOptions,options]() {gameplayOptions->disable(); options->enable();});
 
 
@@ -417,7 +420,7 @@ Race::setupMenus(bool loginRequired)
 	// End of Menu Code
 	//////////////////////////////////////////////////
 
-
+	mainMenu->enable();
 	//if (loginRequired)
 	//{
 	//	login->enable();

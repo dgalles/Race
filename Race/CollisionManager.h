@@ -15,6 +15,7 @@ public:
     void setOrientation(Ogre::Quaternion orentation);
     bool collides(OBB &other, Ogre::Vector3 &MTD);
     bool collides(OBB *other, Ogre::Vector3 &MTD);
+	bool collides(Ogre::Vector3 rayStarting, Ogre::Vector3 rayDirection, float &collisionAlongRay);
     void setScale(Ogre::Vector3 scale);
 
 	Ogre::Vector3 setPosition() { return mPosition; }

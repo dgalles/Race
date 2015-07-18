@@ -13,7 +13,7 @@ class HUD;
 class RaceCamera;
 class Race;
 class WaterMesh;
-
+class AIManager;
 class World
 {
 public:
@@ -21,7 +21,8 @@ public:
 
 	World(Ogre::SceneManager *sceneManager, HUD *hud, RaceCamera * cam, Race *base);
 
-	// You'll want various methods to access & change your world here
+	void AddAIManager(AIManager *am) {mAIManager = am; }
+
 
 	Ogre::SceneManager *SceneManager() { return mSceneManager; }
 	HUD *getHUD() { return mHUD; }
@@ -34,10 +35,10 @@ public:
 	void StartGame();
 
 	RaceCamera *getCamera() { return mCamera; }
+	void LoadMap(std::string map);
 
 protected:
 
-	void LoadMap(std::string map);
 
 	Ogre::SceneManager *mSceneManager;
 
@@ -60,4 +61,7 @@ protected:
 	float mPitch;
 	float mYaw;
 	unsigned int mNumGoalsToShow;
+	AIManager *mAIManager;
+	bool mGameRunning;
+	bool mWorldLoaded;
 };
