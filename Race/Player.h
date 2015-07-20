@@ -16,7 +16,7 @@ public:
 	Player(World *world, Kinect *k, Achievements *ach);
 
 
-
+	void SetLaserLength(float length);
 	bool getEnableKinect() { return mEnableKinect; }
 	void setEnableKinect(bool enable) { mEnableKinect = enable;}
 

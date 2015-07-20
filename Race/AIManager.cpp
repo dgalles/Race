@@ -23,19 +23,43 @@ AIManager::Think(float time)
 			}
 }
 
-	void AIManager::rayCollision(Ogre::Vector3 rayStart, Ogre::Vector3 rayDirection)
+void AIManager::rayCollision(Ogre::Vector3 rayStart, Ogre::Vector3 rayDirection, float &dist)
+{
+	for (std::vector<Enemy *>::iterator it = mEnemies.begin(); it != mEnemies.end(); it++)
 	{
-			for (std::vector<Enemy *>::iterator it = mEnemies.begin(); it != mEnemies.end(); it++)
-			{
-				float dummy;
-				if ((*it)->collides(rayStart, rayDirection, dummy))
-				{
-					(*it)->setMaterial("simpleRed");
+		if ((*it)->collides(rayStart, rayDirection, dist))
+		{
+			(*it)->setMaterial("simpleRed");
 
-				}
-			}
+		}
+		else
+		{
+			(*it)->restoreOriginalMaterial();
 
+		}
 	}
+
+}
+
+void AIManager::rayCollision(Ogre::Vector3 rayStart, Ogre::Vector3 rayDirection)
+{
+	for (std::vector<Enemy *>::iterator it = mEnemies.begin(); it != mEnemies.end(); it++)
+	{
+		float dummy =  std::numeric_limits<float>::max();
+		if ((*it)->collides(rayStart, rayDirection, dummy))
+		{
+			(*it)->setMaterial("simpleRed");
+
+		}
+		else
+		{
+			(*it)->restoreOriginalMaterial();
+
+		}
+	}
+
+}
+
 
 
 void AIManager::AddEnemy(std::string enemyType, Ogre::Vector3 position, const char *model /* = 0 */, float scale /* = 1.0f */ )

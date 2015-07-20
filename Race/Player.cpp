@@ -118,6 +118,13 @@ void Player::reset()
 	mSpeed = 0;
 }
 
+
+void Player::SetLaserLength(float length)
+{
+	mLaserSceneNode->setScale(0.1f, 0.1f, length / 100.0f);
+	
+
+}
 void Player::Think(float time)
 {
 	Ogre::Degree leftRight, frontBack;
@@ -167,6 +174,7 @@ void Player::Think(float time)
 	if (mTurretScaleY == 1.0f)
 	{
 		mTurretSceneNode->setOrientation(Ogre::Quaternion::IDENTITY);
+		mTurretSceneNode->roll(Ogre::Degree(-leftRight));
 		mTurretSceneNode->yaw(Ogre::Degree((xPercent -0.5f) * -90));
 		mBarrelSceneNode->setOrientation(Ogre::Quaternion::IDENTITY);
 		mBarrelSceneNode->pitch(Ogre::Degree((yPercent -turretDelta - 0.1) * -30));
@@ -180,6 +188,7 @@ void Player::Think(float time)
 	else
 	{
 		mIsFiringLaser = false;
+		mTurretSceneNode->setOrientation(Ogre::Quaternion::IDENTITY);
 	}
 
 	mWorld->getHUD()->setSpeed((int) mSpeed);

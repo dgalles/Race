@@ -39,6 +39,7 @@ public:
 
 protected:
 
+	void PointArrowAt(Ogre::Vector3 pos);
 
 	Ogre::SceneManager *mSceneManager;
 

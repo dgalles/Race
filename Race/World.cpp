@@ -19,15 +19,15 @@
 #define MESH_NAME "WaterMesh"
 #define ENTITY_NAME "WaterEntity"
 #define MATERIAL_NAME "Examples/Water8"
-#define COMPLEXITY 128 		// watch out - number of polys is 2*ACCURACY*ACCURACY !
+#define COMPLEXITY 32 		// watch out - number of polys is 2*ACCURACY*ACCURACY !
 #define PLANE_SIZE 8000
 
 int World::worldRand() 
 {
-    mSeed = mSeed * 1103515245 + 12345;
+	mSeed = mSeed * 1103515245 + 12345;
 	int retval = ((unsigned)(mSeed/65536) % RAND_MAX);
 
-    return retval;
+	return retval;
 }
 
 
@@ -39,9 +39,9 @@ int World::worldRand()
 //					3900,5,3700 };
 
 float positions[] = {4000,5,4000,
-	                4000,5,5000,
-	                5000,5,5000,
-					5000,5,4000};
+	4000,5,5000,
+	5000,5,5000,
+	5000,5,4000};
 
 
 
@@ -85,7 +85,7 @@ bool getSafeFloat(TiXmlElement *elem, char *name,float &floatVal)
 	if (elem->FirstChildElement(name))
 	{
 		floatVal = (float) atof(elem->FirstChildElement(name)->GetText());
-			return true;
+		return true;
 
 	}
 	return false;
@@ -97,7 +97,7 @@ void World::LoadMap(std::string mapName)
 	if(!doc.LoadFile(TIXML_ENCODING_UTF8)) {
 		return;
 	}
-		TiXmlHandle hDoc(&doc);
+	TiXmlHandle hDoc(&doc);
 	TiXmlElement *map;
 	TiXmlHandle hRoot(0);
 
@@ -134,9 +134,9 @@ void World::LoadMap(std::string mapName)
 
 
 
-	
+
 	TiXmlElement *Obsticales = hRoot.FirstChildElement("Walls").Element();
-	
+
 	for (TiXmlElement *obs = Obsticales->FirstChildElement(); obs; obs = obs->NextSiblingElement()) 
 	{
 
@@ -180,7 +180,7 @@ void World::LoadMap(std::string mapName)
 
 
 	TiXmlElement *gates = hRoot.FirstChildElement("Gates").Element();
-	
+
 	for (TiXmlElement *gate = gates->FirstChildElement(); gate; gate = gate->NextSiblingElement()) 
 	{
 
@@ -233,7 +233,7 @@ void World::LoadMap(std::string mapName)
 		goal->setScale(60);
 		if (i == 0) 
 		{
-		
+
 			goal->setAlpha(1.0f);
 		} 
 		else
@@ -260,9 +260,9 @@ void World::LoadMap(std::string mapName)
 World::World(Ogre::SceneManager *sceneManager, HUD *hud, RaceCamera * cam, Race *base) :
 	mSceneManager(sceneManager), mBase(base), mHUD(hud), mCamera(cam), mPlayer(NULL)
 {
-		 mRoll = 0;
-	 mPitch = 0;
-	 mYaw = 0;
+	mRoll = 0;
+	mPitch = 0;
+	mYaw = 0;
 	mSceneManager->setAmbientLight(Ogre::ColourValue(1,1,1));
 	mGameRunning = false;
 	Ogre::OverlayManager *om = Ogre::OverlayManager::getSingletonPtr();
@@ -335,6 +335,8 @@ void World::Think(float time)
 	}
 	mPlayer->translate(mPlayer->getVelocity() * time);
 
+	float dist = std::numeric_limits<float>::max();
+	bool laserCollide = false;
 	for (std::vector<GameObject*>::iterator it = mStaticObjects.begin(); it != mStaticObjects.end(); it++)
 	{
 		Ogre::Vector3 mtd;
@@ -343,7 +345,25 @@ void World::Think(float time)
 			mPlayer->translate(mtd);
 			mPlayer->setSpeed(0);
 		}
+		if (mPlayer->isFiringLaser())
+		{
+			Ogre::Vector3 laserStart;
+			Ogre::Vector3 laserDirection;
+
+
+			mPlayer->getLaser(laserStart, laserDirection);
+			if ( (*it)->collides(laserStart, laserDirection, dist))
+			{
+				laserCollide = true;
+			}
+		}
 	}
+
+	if (laserCollide)
+	{
+		mPlayer->SetLaserLength(dist);
+	}
+
 	float WaterPlaneX = mPlayer->getPosition().x ;
 	float WaterPlaneZ = mPlayer->getPosition().z;
 
@@ -365,9 +385,9 @@ void World::Think(float time)
 		for (unsigned int i = 0; i < mNumGoalsToShow; i++)
 		{
 			int index = (mCurrentIndex + i) % mGoalPositions.size();
-		mGoals[i]->setPosition(mGoalPositions[index]);
-		mGoals[i]->setOrientation(mGoalOrientations[index]);
-		//mGoals[i]->roll(Ogre::Degree(90));
+			mGoals[i]->setPosition(mGoalPositions[index]);
+			mGoals[i]->setOrientation(mGoalOrientations[index]);
+			//mGoals[i]->roll(Ogre::Degree(90));
 
 		}
 	}
@@ -378,7 +398,7 @@ void World::Think(float time)
 	if (mPlayer->isFiringLaser())
 	{
 		mPlayer->getLaser(laserStart, laserDirection);
-		mAIManager->rayCollision(laserStart,laserDirection);
+		mAIManager->rayCollision(laserStart,laserDirection, dist);
 	}
 
 	for (unsigned int i = 0; i < mNumGoalsToShow; i++)
@@ -386,34 +406,43 @@ void World::Think(float time)
 		mGoals[i]->roll(Ogre::Degree(time * 30));
 	}
 
-	 Ogre::Vector3 diff = mGoals[0]->getPosition() - mPlayer->getPosition();
-	 diff = mCamera->getOrientation().Inverse() *diff;
-	 diff.y = 0;
+	PointArrowAt(mGoals[0]->getPosition());
 
-	 diff.normalise();
 
-	 Ogre::Quaternion q;
-	 q.FromAxes( Ogre::Vector3::UNIT_Y.crossProduct(diff), Ogre::Vector3::UNIT_Y,diff);
 
-	 mArrowNode->setOrientation(q);
 
-	  InputHandler *ih = InputHandler::getInstance();
 
-	  if (ih->IsKeyDown(OIS::KC_NUMPAD4))
-	  {
-		  mCamera->setOrbitDegree(mCamera->getOrbitDegree() + time*20);
+}
 
-	  }
-	  if (ih->IsKeyDown(OIS::KC_NUMPAD6))
-	  {
-	  mCamera->setOrbitDegree(mCamera->getOrbitDegree() - time*20);
-	  }
 
-//		  mArrowNode->roll(Ogre::Degree(mRoll));
-		  mArrowNode->pitch(Ogre::Degree(90));
-		  mArrowNode->yaw(Ogre::Degree(90));
+void World::PointArrowAt(Ogre::Vector3 pos)
+{
+	
+	Ogre::Vector3 diff = pos - mPlayer->getPosition();
+	diff = mCamera->getOrientation().Inverse() *diff;
+	diff.y = 0;
 
-	  
+	diff.normalise();
+
+	Ogre::Quaternion q;
+	q.FromAxes(Ogre::Vector3::UNIT_Y.crossProduct(diff), Ogre::Vector3::UNIT_Y,diff);
+
+	mArrowNode->setOrientation(q);
+
+	InputHandler *ih = InputHandler::getInstance();
+
+	//if (ih->IsKeyDown(OIS::KC_NUMPAD4))
+	//{
+	//	mCamera->setOrbitDegree(mCamera->getOrbitDegree() + time*20);
+
+	//}
+	//if (ih->IsKeyDown(OIS::KC_NUMPAD6))
+	//{
+	//	mCamera->setOrbitDegree(mCamera->getOrbitDegree() - time*20);
+	//}
+
+	mArrowNode->pitch(Ogre::Degree(90));
+	mArrowNode->yaw(Ogre::Degree(90));
 
 
 }

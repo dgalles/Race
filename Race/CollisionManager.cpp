@@ -168,18 +168,15 @@ bool  OBB::collides(Ogre::Vector3 rayStarting, Ogre::Vector3 rayDirection,float 
 	}
 
 
-	float tfirst = 0.0f, tlast = std::numeric_limits<float>::max();
+	Ogre::Quaternion inverseRot = mOrientation.Inverse();
+	rayStarting = inverseRot * (rayStarting - mPosition); 
+	rayDirection = inverseRot * rayDirection;
 
+	float tfirst = 0.0f, tlast =collisionAlongRay;
 
-	Ogre::Vector3 v = mPointsGlobal[0];
-	float f = v.x;
-
-	float f2 = mPointsGlobal[0].x;
-
-
-   if (!RaySlabIntersect((-mOrientation * rayStarting).x, -(mOrientation * rayDirection).x, (mPointsGlobal[0].x) , mPointsGlobal[7].x, tfirst, tlast)) return false;
-   if (!RaySlabIntersect((-mOrientation * rayStarting).y, -(mOrientation * rayDirection).y, (mPointsGlobal[0].y), mPointsGlobal[7].y, tfirst, tlast)) return false;
-   if (!RaySlabIntersect((-mOrientation * rayStarting).z, -(mOrientation * rayDirection).z, (mPointsGlobal[0].z) , mPointsGlobal[7].z, tfirst, tlast)) return false;
+   if (!RaySlabIntersect(rayStarting.x, rayDirection.x, (mPointsLocal[0].x)*mScale.x , mPointsLocal[Ogre::AxisAlignedBox::NEAR_RIGHT_TOP].x*mScale.x, tfirst, tlast)) return false;
+   if (!RaySlabIntersect(rayStarting.y, rayDirection.y, (mPointsLocal[0].y)*mScale.y , mPointsLocal[Ogre::AxisAlignedBox::NEAR_RIGHT_TOP].y* mScale.y, tfirst, tlast)) return false;
+   if (!RaySlabIntersect(rayStarting.z, rayDirection.z, (mPointsLocal[0].z)*mScale.z , mPointsLocal[Ogre::AxisAlignedBox::NEAR_RIGHT_TOP].z *mScale.z, tfirst, tlast)) return false;
 
     collisionAlongRay = tfirst;
     return true;
