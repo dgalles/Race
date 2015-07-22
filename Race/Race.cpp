@@ -76,6 +76,7 @@ Race::createFrameListener(void)
 	mFrameListener = new MainListener(mWindow, mAIManager, mWorld, mRaceCamera, mKinect, mHUD, mAchievements, mPlayer);
 	//mFrameListener = new MainListener(mWindow, mAIManager, mWorld, mRaceCamera, mGamepad, mPlayer, mHUD);
 	mRoot->addFrameListener(mFrameListener);
+	mFrameListener->setPaused(true);
 	// mFrameListener->showDebugOverlay(true);
 
 }
@@ -134,14 +135,12 @@ Race::createScene()
 
 }
 void
-	Race::startGame()
+	Race::startGame(char *levelName, bool doEdit)
 {
-
-
-
 	mLogger->StartSession( "\"subgame\":\"normal\"");
 	mKinect->StartSession();
-	mWorld->StartGame();
+	mWorld->StartGame(levelName, doEdit);
+	mFrameListener->setPaused(false);
 }
 
 void Race::startRace()
@@ -161,6 +160,8 @@ void Race::endGame()
 {
 	mLogger->EndSession();
 	mKinect->EndSession();
+	mFrameListener->setPaused(true);
+	mWorld->destroyWorld();
 }
 
 
@@ -343,8 +344,14 @@ Race::setupMenus(bool loginRequired)
 	//////////////////////////////////////////////////
 
    
+    gameplayOptions->AddChooseFloat("Player Speed", [p](float x) {p->setMaxSpeed(x); }, 50.0f, 1000.0f, p->getMaxSpeed(), 0.5f, true);
+    gameplayOptions->AddChooseFloat("Player Turning Angle (Degrees / sec)", [p](float x) {p->setDegreesPerSecond(x); }, 10, 180, p->getDegressPerSecond(), 0.5f, true);
+    gameplayOptions->AddChooseFloat("Player Acceleration", [p](float x) {p->setAcceleration(x); }, 10, 180, p->getAcceleration(), 5, true);
 
     gameplayOptions->AddChooseBool("Stop When Firing", [p ](bool x) { p->setStopOnFiring(x);},p->getStopOnFiring(), true);
+    gameplayOptions->AddChooseFloat("Player Laser DPS", [p](float x) {p->setLaserDPS(x); }, 0.5f, 10.0f, p->getLaserDPS(), 0.5f, true);
+    gameplayOptions->AddChooseFloat("Laser Duration", [p](float x) {p->setLaserDuration(x); },1.0f, 1000.0f, p->getLaserDuration(), 1.0f, true);
+    gameplayOptions->AddChooseFloat("Laser Cooldown", [p](float x) {p->setLaserCooldown(x); },0.0f, 30, p->getLaserCooldown(), 1.0f, true);
 	gameplayOptions->AddSelectElement("Return to Options Menu", [gameplayOptions,options]() {gameplayOptions->disable(); options->enable();});
 
 
@@ -354,7 +361,7 @@ Race::setupMenus(bool loginRequired)
 	// Options Submenu:  Controls 
 	//////////////////////////////////////////////////
 
-    controlOptions->AddChooseBool("Callibrate Kinect Every Game", [ ](bool x) { },true, true);
+//    controlOptions->AddChooseBool("Callibrate Kinect Every Game", [ ](bool x) { },true, true);
     controlOptions->AddChooseFloat("Kinect Sensitivity Left / Right", [](float x) { }, 0.7f, 1.5f, 1.f, 0.1f, true);
     controlOptions->AddChooseFloat("Kinect Sensitivity Front / Back", [](float x) { }, 0.7f, 1.5f, 1.f, 0.1f, true);
     controlOptions->AddSelectElement("Callibrate Kinect Now", [controlOptions, k]() {controlOptions->disable(); k->callibrate(4.0f, [controlOptions]() {controlOptions->enable();});});
@@ -372,7 +379,10 @@ Race::setupMenus(bool loginRequired)
 	//////////////////////////////////////////////////
 
 
-	mainMenu->AddSelectElement("Start Standard Game", [mainMenu,this]() { mainMenu->disable(); this->startGame(); });
+	mainMenu->AddSelectElement("Start Standard Game", [mainMenu,this]() { mainMenu->disable(); this->startGame("Level1"); });
+
+	mainMenu->AddSelectElement("Start Edit", [mainMenu,this]() { mainMenu->disable(); this->startGame("Level1", true); });
+
 	mainMenu->AddSelectElement("Login", [mainMenu, login]() {mainMenu->disable(); login->enable();});
 	mainMenu->AddSelectElement("Show Goals", [mainMenu, a]() {a-> ShowAllAchievements(true); mainMenu->disable();});
 	mainMenu->AddSelectElement("Options", [options, mainMenu]() {options->enable(); mainMenu->disable();});
@@ -389,7 +399,7 @@ Race::setupMenus(bool loginRequired)
 	//////////////////////////////////////////////////
 
 
-    pauseMenu->AddSelectElement("Continue", [pauseMenu]() {pauseMenu->disable(); });
+    pauseMenu->AddSelectElement("Continue", [pauseMenu,l]() {pauseMenu->disable();l->setPaused(false); });
     pauseMenu->AddSelectElement("End Game (Return to Main Menu)", [pauseMenu,mainMenu, this]() {this->endGame(), pauseMenu->disable();mainMenu->enable(); });
     pauseMenu->AddSelectElement("Quit (Close Program)", [this, l]() {this->writeConfigStr();l->quit();});
 

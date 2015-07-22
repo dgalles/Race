@@ -20,20 +20,20 @@ public:
     GameObject(ObjectType type);
 	GameObject::GameObject(ObjectType typ, Ogre::String modelName,  Ogre::SceneManager *sm,Ogre::Vector3 position, Ogre::Quaternion orientation);
 
-    ~GameObject(void);
+    virtual ~GameObject(void);
 
 	ObjectType type() {return mType;}
 
     void loadModel(Ogre::String modelName, Ogre::SceneManager *sm);
     void setPosition(Ogre::Vector3 newPosition);
     void setOrientation(Ogre::Quaternion newOrientation);
-    void yaw(Ogre::Degree d);
-    void pitch(Ogre::Degree d);
-    void roll(Ogre::Degree d);
+    void yaw(Ogre::Degree d, bool isLocal =true);
+    void pitch(Ogre::Degree d, bool isLocal =true);
+    void roll(Ogre::Degree d, bool isLocal =true);
 
-    void yaw(Ogre::Radian r);
-    void pitch(Ogre::Radian r);
-    void roll(Ogre::Radian r);
+    void yaw(Ogre::Radian r, bool isLocal =true);
+    void pitch(Ogre::Radian r, bool isLocal =true);
+    void roll(Ogre::Radian r, bool isLocal =true);
 
     void setScale(float newScale);
 
@@ -44,20 +44,20 @@ public:
 	void translate(Ogre::Vector3 delta);
 
 
-    bool collides(GameObject *other);
+    bool collides(GameObject *other) const;
 
-    bool collides(GameObject *other, Ogre::Vector3 &MTD);
-    bool collides(const GameObject &other, Ogre::Vector3 &MTD);
+    bool collides(GameObject *other, Ogre::Vector3 &MTD) const;
+    bool collides(const GameObject &other, Ogre::Vector3 &MTD) const;
 
 	bool collides(Ogre::Vector3 start, Ogre::Vector3 direction, float &collidePos);
 
 	Ogre::Vector3 minPointLocalScaled();
 	Ogre::Vector3 maxPointLocalScaled();
 
-    Ogre::Vector3 getPosition() { return mPosition; }
-    Ogre::Quaternion getOrientation();
-    Ogre::Vector3 getScale() { return mScale;}
-	Ogre::Vector3 getFacing() {return mFacing;} 
+    Ogre::Vector3 getPosition() const { return mPosition; }
+    Ogre::Quaternion getOrientation() const;
+    Ogre::Vector3 getScale() const { return mScale;}
+	Ogre::Vector3 getFacing()const {return mFacing;} 
 
 	void setMaterial(Ogre::String materialName);
 	void restoreOriginalMaterial();

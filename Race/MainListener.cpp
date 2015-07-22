@@ -44,16 +44,14 @@ bool
 	if (!mPaused)
 	{
 		mAIManager->Think(time);
-		//  The only reason we have the Think method of the InputHandler return
-		//   a value, is for the escape key to cause our application to end.
-		//   Feel free to change this to something that makes more sense to you.
-		for (int i = 0; i < 1; i++)
-		{
-			mWorld->Think(time);
-			mPlayer->Think(time);
-			mRaceCamera->Think(time);
-			mAchievement->Think(time);
-		}
+		mWorld->Think(time);
+		mPlayer->Think(time);
+		mRaceCamera->Think(time);
+		mAchievement->Think(time);
+
+
+			//	InputHandler *ih = InputHandler::getInstance();
+
 	}
 	MenuManager::getInstance()->think(time);
 
@@ -73,6 +71,7 @@ bool
 		{
 			mAchievement->ShowAllAchievements(false);
             MenuManager::getInstance()->getMenu("main")->enable();
+			mPaused = true;
 
 		}
 		else

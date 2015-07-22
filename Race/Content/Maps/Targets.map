@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Map>
+	<Config>
+        <Mode>Race</Mode>
+		<AllowGun>false</AllowGun>
+		<RestrictGunElevation>true</RestrictGunElevation>
+    </Config>
+	
+
+	<enemies>
+		<Target>
+		    <Type>Target</Type>
+            <Position X="4000" Y="15" Z="1300" />
+			<Scale>20</Scale>
+			<Model>Target.mesh</Model>
+			<Health>1</Health>
+			<Value>10</Value>
+		</Target>
+	</enemies>
+	
+	
+	
+	<Walls>
+
+
+		</Walls>		
+</Map>

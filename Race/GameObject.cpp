@@ -23,7 +23,7 @@ GameObject::GameObject(ObjectType typ, Ogre::String modelName, Ogre::SceneManage
 }
 
 
-    Ogre::Quaternion GameObject::getOrientation()
+    Ogre::Quaternion GameObject::getOrientation() const
 	{ 
 		return mCollision->getOrientation();
 	}
@@ -32,23 +32,23 @@ GameObject::GameObject(ObjectType typ, Ogre::String modelName, Ogre::SceneManage
 GameObject::~GameObject(void)
 {
     mScale = Ogre::Vector3::UNIT_SCALE;
-    if (mSceneNode != NULL)
-    {
-        	mSceneManager->getRootSceneNode()->removeChild(mSceneNode);
+	if (mSceneNode != NULL)
+	{
+		mSceneManager->getRootSceneNode()->removeChild(mSceneNode);
 
-	unsigned short index = 0;
-	Ogre::MovableObject *mo = mSceneNode->detachObject(index);
-	Ogre::Entity *ent = static_cast<Ogre::Entity *>(mo);
+		unsigned short index = 0;
+		Ogre::MovableObject *mo = mSceneNode->detachObject(index);
+		Ogre::Entity *ent = static_cast<Ogre::Entity *>(mo);
 
-	mSceneManager->destroyEntity(ent);
-	mSceneManager->destroySceneNode(mSceneNode);
+		mSceneManager->destroyEntity(ent);
+		mSceneManager->destroySceneNode(mSceneNode);
 
-    }
-    delete mCollision;
+	}
+	delete mCollision;
 }
 
 
-bool GameObject::collides(GameObject *other)
+bool GameObject::collides(GameObject *other) const
 {
 	Ogre::Vector3 MTD;
 	return mCollision->collides(other->mCollision, MTD);
@@ -56,7 +56,7 @@ bool GameObject::collides(GameObject *other)
 
 
 
-bool GameObject::collides(GameObject *other, Ogre::Vector3 &MTD)
+bool GameObject::collides(GameObject *other, Ogre::Vector3 &MTD) const
 {
 	return mCollision->collides(other->mCollision, MTD);
 
@@ -70,7 +70,7 @@ bool  GameObject::collides(Ogre::Vector3 start, Ogre::Vector3 direction, float &
 }
 
 
-bool GameObject::collides(const GameObject &other, Ogre::Vector3 &MTD)
+bool GameObject::collides(const GameObject &other, Ogre::Vector3 &MTD) const
 {
 	return mCollision->collides(other.mCollision, MTD);
 }
@@ -155,16 +155,18 @@ void GameObject::setOrientation(Ogre::Quaternion newOrientation)
 	mFacing = mCollision->getOrientation() * Ogre::Vector3::UNIT_Z;
 
 }
-void GameObject::yaw(Ogre::Degree d)
+void GameObject::yaw(Ogre::Degree d, bool isLocal)
 {
-    mSceneNode->yaw(d);
+	Ogre::Node::TransformSpace t = (isLocal ? Ogre::Node::TransformSpace::TS_LOCAL : Ogre::Node::TransformSpace::TS_WORLD);
+    mSceneNode->yaw(d, t);
     mCollision->setOrientation(mSceneNode->getOrientation());
 	mFacing = mCollision->getOrientation() * Ogre::Vector3::UNIT_Z;
 
 }
-void GameObject::pitch(Ogre::Degree d)
+void GameObject::pitch(Ogre::Degree d, bool isLocal)
 {
-    mSceneNode->pitch(d);
+	Ogre::Node::TransformSpace t = (isLocal ? Ogre::Node::TransformSpace::TS_LOCAL : Ogre::Node::TransformSpace::TS_WORLD);
+    mSceneNode->pitch(d, t);
     mCollision->setOrientation(mSceneNode->getOrientation());
 	mFacing = mCollision->getOrientation() * Ogre::Vector3::UNIT_Z;
 
@@ -179,31 +181,35 @@ void GameObject::translate(Ogre::Vector3 delta)
 
 
 
-void GameObject::roll(Ogre::Degree d)
+void GameObject::roll(Ogre::Degree d, bool isLocal)
 {
-    mSceneNode->roll(d);
+	Ogre::Node::TransformSpace t = (isLocal ? Ogre::Node::TransformSpace::TS_LOCAL : Ogre::Node::TransformSpace::TS_WORLD);
+    mSceneNode->roll(d, t);
     mCollision->setOrientation(mSceneNode->getOrientation());
 	mFacing = mCollision->getOrientation() * Ogre::Vector3::UNIT_Z;
 
 }
 
-void GameObject::yaw(Ogre::Radian r)
+void GameObject::yaw(Ogre::Radian r, bool isLocal)
 {
-    mSceneNode->yaw(r);
+	Ogre::Node::TransformSpace t = (isLocal ? Ogre::Node::TransformSpace::TS_LOCAL : Ogre::Node::TransformSpace::TS_WORLD);
+    mSceneNode->yaw(r, t);
     mCollision->setOrientation(mSceneNode->getOrientation());
 	mFacing = mCollision->getOrientation() * Ogre::Vector3::UNIT_Z;
 
 }
-void GameObject::pitch(Ogre::Radian r)
+void GameObject::pitch(Ogre::Radian r, bool isLocal)
 {
-        mSceneNode->pitch(r);
+	Ogre::Node::TransformSpace t = (isLocal ? Ogre::Node::TransformSpace::TS_LOCAL : Ogre::Node::TransformSpace::TS_WORLD);
+        mSceneNode->pitch(r, t);
     mCollision->setOrientation(mSceneNode->getOrientation());
 	mFacing = mCollision->getOrientation() * Ogre::Vector3::UNIT_Z;
 
 }
-void GameObject::roll(Ogre::Radian r)
+void GameObject::roll(Ogre::Radian r, bool isLocal)
 {
-        mSceneNode->roll(r);
+	Ogre::Node::TransformSpace t = (isLocal ? Ogre::Node::TransformSpace::TS_LOCAL : Ogre::Node::TransformSpace::TS_WORLD);
+        mSceneNode->roll(r, t);
     mCollision->setOrientation(mSceneNode->getOrientation());
 	mFacing = mCollision->getOrientation() * Ogre::Vector3::UNIT_Z;
 

@@ -18,41 +18,41 @@ void Player::createLaserMesh(void)
 	//declare all of our grass variables
 	const float width = 3.0f;
 	const float length = 10.0f;
- 
+
 	Ogre::ManualObject laser("LaserObject");
- 
+
 	Ogre::Vector3 vec(width / 2, 0, 0);
 	Ogre::Quaternion rot;
 	rot.FromAngleAxis(Ogre::Degree(60), Ogre::Vector3::UNIT_Z);
- 
+
 	//start defining our manual object
 	laser.begin("LaserMaterial2", Ogre::RenderOperation::OT_TRIANGLE_LIST);
- 
+
 	//define the 4 vertices of our quad and set to the texture coordinates
 	for(int i = 0; i < 6; ++i)
 	{
 		laser.position(-vec.x, -vec.y, length);
 		laser.textureCoord(0, 0);
- 
+
 		laser.position(vec.x, vec.y, length);
 		laser.textureCoord(1, 0);
- 
+
 		laser.position(-vec.x, -vec.y,0);
 		laser.textureCoord(0, 1);
- 
+
 		laser.position(vec.x, vec.y,0);
 		laser.textureCoord(1, 1);
- 
+
 		int offset = i * 4;
- 
+
 		laser.triangle(offset, offset + 3, offset + 1);
 		laser.triangle(offset, offset + 2, offset + 3);
- 
+
 		//rotate the next quad
 		vec = rot * vec;
 	}
 	laser.end();
- 
+
 	//create an actual mesh out of this object
 	laser.convertToMesh("LaserMesh");
 }
@@ -64,17 +64,17 @@ Player::Player(World *world, Kinect *k, Achievements *ach) :
 {
 
 	mStopOnFiring = false;
-	 mCurrentYPercent = 0;
-	mCurrentXPercent = 0;
+	mCurrentYPercent = 0;
+	mCurrentXPercent = 0.5f;
 
 	loadModel("Boat1.mesh", mWorld->SceneManager());
 	setScale(10);
 	setPosition(Ogre::Vector3(1500,-3,1500));
 	mVelocityDirection = Ogre::Vector3::UNIT_Z;
 	mRollAngle = 0;
-	
+
 	Ogre::SceneManager *sm = mWorld->SceneManager();
-    Ogre::Entity *turretEnt =sm->createEntity("TurretBase1.mesh");
+	Ogre::Entity *turretEnt =sm->createEntity("TurretBase1.mesh");
 	mTurretSceneNode = mSceneNode->createChildSceneNode();
 	mTurretSceneNode->attachObject(turretEnt);
 	mTurretSceneNode->setPosition(Ogre::Vector3(0,1.4f,1));
@@ -92,7 +92,7 @@ Player::Player(World *world, Kinect *k, Achievements *ach) :
 	mLaserSceneNode = mBarrelSceneNode->createChildSceneNode();
 	mLaserSceneNode->setPosition(Ogre::Vector3(0,0,	barrelEnt->getBoundingBox().getMaximum().z));
 	mLaserSceneNode->attachObject(laserEnt);
-	mLaserSceneNode->setScale(0.1,0.1,10);
+	mLaserSceneNode->setScale(0.1f,0.1f,10.0f);
 
 
 	mTurretScaleY = 0.0f;
@@ -116,13 +116,29 @@ void Player::reset()
 	mDegreesPerSecond = 45.0f;
 	mMaxSpeed = 500;
 	mSpeed = 0;
+
+	mAccel = 10;
+	mLaserRechargeTime = 5;
+	mLaserTime = 5;
+	mLaserPercentage = 1;
+	mDesiredlaserLength = 500;
+	mLaserNeedsRecharging = false;
+	mLaserDPS = 1.0f;
+	mLaserAllowed = true;
+	mAimVertical = true;
+
 }
 
 
 void Player::SetLaserLength(float length)
 {
-	mLaserSceneNode->setScale(0.1f, 0.1f, length / 100.0f);
-	
+	mDesiredlaserLength = length;
+	SetLaserLengthInternal(length);
+}
+
+void Player::SetLaserLengthInternal(float length)
+{
+		mLaserSceneNode->setScale(0.1f, 0.1f, length / 100.0f);
 
 }
 void Player::Think(float time)
@@ -130,13 +146,13 @@ void Player::Think(float time)
 	Ogre::Degree leftRight, frontBack;
 	roll(-mRollAngle);
 
-	float turretDelta = 0.2;
+	float turretDelta = 0.2f;
 
 	float xPercent, yPercent;
 
 	updateAnglesFromControls(leftRight,frontBack, xPercent, yPercent, time);
 
-	if (yPercent >turretDelta)
+	if (yPercent >turretDelta && mLaserAllowed)
 	{
 		if (mTurretScaleY < 1.0f)
 		{
@@ -147,6 +163,8 @@ void Player::Think(float time)
 			}
 			mTurretSceneNode->setScale(1,mTurretScaleY,1);
 			mBarrelSceneNode->setScale(1,1,mTurretScaleY);
+			mTurretSceneNode->setOrientation(Ogre::Quaternion::IDENTITY);
+
 		}
 	}  else {
 		if (mTurretScaleY > 0)
@@ -158,10 +176,12 @@ void Player::Think(float time)
 			}
 			mTurretSceneNode->setScale(1,mTurretScaleY,1);
 			mBarrelSceneNode->setScale(1,1,mTurretScaleY);
+			mTurretSceneNode->setOrientation(Ogre::Quaternion::IDENTITY);
+
 		}
 	}
 
-	mSpeed +=frontBack.valueDegrees() * time * -10;
+	mSpeed +=frontBack.valueDegrees() * time * -mAccel;
 	if (mSpeed > mMaxSpeed)
 	{
 		mSpeed = mMaxSpeed;
@@ -173,12 +193,31 @@ void Player::Think(float time)
 
 	if (mTurretScaleY == 1.0f)
 	{
+
+
 		mTurretSceneNode->setOrientation(Ogre::Quaternion::IDENTITY);
 		mTurretSceneNode->roll(Ogre::Degree(-leftRight));
 		mTurretSceneNode->yaw(Ogre::Degree((xPercent -0.5f) * -90));
 		mBarrelSceneNode->setOrientation(Ogre::Quaternion::IDENTITY);
-		mBarrelSceneNode->pitch(Ogre::Degree((yPercent -turretDelta - 0.1) * -30));
+		if (mAimVertical)
+		{
+			mBarrelSceneNode->pitch(Ogre::Degree((yPercent -turretDelta - 0.1f) * -30));
+		}
+
+	}
+
+	if (mTurretScaleY == 1.0f && mLaserPercentage > 0.0f && !mLaserNeedsRecharging)
+	{
+		SetLaserLengthInternal (mDesiredlaserLength);
+		mLaserPercentage -= time / mLaserTime;
+		if (mLaserPercentage < 0)
+		{
+			mLaserPercentage = 0;
+			mLaserNeedsRecharging = true;
+		}
+		mWorld->getHUD()->setLaserPower(mLaserPercentage, mLaserNeedsRecharging);
 		mLaserSceneNode->roll(Ogre::Degree(time *180));
+
 		if (mStopOnFiring)
 		{
 			mSpeed = 0;
@@ -187,8 +226,16 @@ void Player::Think(float time)
 	}
 	else
 	{
-		mIsFiringLaser = false;
-		mTurretSceneNode->setOrientation(Ogre::Quaternion::IDENTITY);
+		SetLaserLengthInternal(0);
+		mLaserPercentage += time / mLaserRechargeTime;
+		if (mLaserPercentage > 1)
+		{
+			mLaserPercentage = 1;
+			mLaserNeedsRecharging = false;
+		}
+		mWorld->getHUD()->setLaserPower(mLaserPercentage,mLaserNeedsRecharging);
+
+			mIsFiringLaser = false;
 	}
 
 	mWorld->getHUD()->setSpeed((int) mSpeed);
@@ -288,7 +335,7 @@ void Player::updateAnglesFromControls(Ogre::Degree &angle, Ogre::Degree &angle2,
 		}
 		xPercent = mCurrentXPercent;
 		yPercent = mCurrentYPercent;
-	
+
 
 	}
 	if (!mUseFrontBack)

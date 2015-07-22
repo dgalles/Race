@@ -33,7 +33,7 @@ Kinect::Kinect(void)
 	mXRightMinDif = -0.217648357f;
 	mXRightMaxDif = 0.530554414f;
 	mYRightMinDif = -0.382603377f;
-	mYRightMaxDif = 0.276229203;
+	mYRightMaxDif = 0.276229203f;
 
 	baseVectorDelta = Ogre::Vector2::ZERO;
 

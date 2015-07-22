@@ -58,4 +58,5 @@ protected:
 	Ogre::Vector3 mShakeOffset;
 	bool mReview;
 	float mOrbitDegree;
+	bool mAllowCameraMovement;
 };

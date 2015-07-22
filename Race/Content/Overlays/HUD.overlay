@@ -10,6 +10,7 @@ HUD/ArrowDirection
 
 }
 
+
  	
 
 // The name of the overlay comes first
@@ -27,11 +28,41 @@ HUD/Score
       width 1
       height 0.1
 		
+		
+		element TextArea(HUD/Score/Panel/Test)
+		{
+		
+         left 0.7
+		 top 0.1
+         font_name Big
+         char_height 0.04
+         colour 1 0 0
+		}
 
+
+		element TextArea(HUD/Score/Panel/Score)
+		{
+		
+         left 0.1
+		 top 0.1
+         font_name Big
+         char_height 0.04
+         colour 1 0 0
+         caption Score = 0
+		}
+
+		element TextArea(HUD/Score/Panel/Time)
+		{
+		
+         left 0.1
+         font_name Big
+         char_height 0.04
+         colour 1 0 0
+         caption Time = 0 s
+		}				
 		
 		element TextArea(HUD/Score/Panel/Speed)
 		{
-		metrics_mode relative
 		
          left 0.7
          font_name Big
@@ -41,6 +72,33 @@ HUD/Score
 		}
 		
     }
+	
+	container Panel(HUD/Laser)
+	{
+		left 0.0
+		top 0.0
+		width = 1
+		height = 0.1
+		
+		element TextArea(HUD/Laser/Text)
+		{
+			font_name Big
+			char_height 0.04
+			colour 0.0 0.0 0.1
+			top 0.01
+			caption Laser Power 
+		}
+		
+		container Panel(HUD/Laser/Bar)
+		{
+			left 0.15
+			top 0.015
+			width 0.5
+			height 0.02
+			material LaserPowerOK	
+		}
+	
+	}
 	
 	container Panel(HUD/Score/GhostPanel)
     {
@@ -236,18 +294,3 @@ HUD/SlowDown
 		}
 	}
 }
-
-HUD/DownArrow
-{
-    container Panel(HUD/DownArrow/Panel)
-    {
-      metrics_mode relative
-
-	  left 0.4
-      top 0.0
-      width 0.2
-      height 0.2
-	  material DownArrow
-    }   
-}
-

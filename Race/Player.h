@@ -45,21 +45,43 @@ public:
 	bool getStopOnFiring() { return mStopOnFiring; }
 	void setOrientation(Ogre::Quaternion newOrientation);
 
+	bool getLaserAllowed() { return mLaserAllowed; }
+	void setLaserAllowed(bool allowed) { mLaserAllowed = allowed; }
+
+	bool getLaserAimVertical() { return mAimVertical; }
+	void setLaserAimVertical(bool aimVert) {  mAimVertical = aimVert; }
+
+
 	void getLaser(Ogre::Vector3 &startPos, Ogre::Vector3 &direction);
 
 	bool isFiringLaser() { return mIsFiringLaser; }
 
+	float getLaserDPS() { return mLaserDPS; }
+	void setLaserDPS(float newDPS) { mLaserDPS = newDPS;}
+
+	void setLaserDuration(float dur) { mLaserTime = dur; }
+	float getLaserDuration() { return mLaserTime; }
+
+	void setLaserCooldown(float cool) { mLaserRechargeTime = cool; }
+	float getLaserCooldown() { return mLaserRechargeTime; }
+
+	float getAcceleration() { return mAccel; }
+	void setAcceleration(float accel) { mAccel = accel; }
 
 protected:
 	void SendData(float time);
 	void updateAnglesFromControls(Ogre::Degree &angle, Ogre::Degree &angle2, float &xPercent, float &yPercent, float time);
-
+	void SetLaserLengthInternal(float length);
 	void createLaserMesh(void);
 
 	World *mWorld;
 	Kinect *mKinect;
 	bool mIsFiringLaser;
 
+	float mAccel;
+
+	bool mAimVertical;
+	bool mLaserAllowed;
 
 	bool mEnableKinect;
 	bool mEnableKeyboard;
@@ -79,9 +101,15 @@ protected:
 	Ogre::SceneNode *mLaserSceneNode;
 	bool mStopOnFiring;
 
+	float mLaserDPS;
 	float mCurrentYPercent;
 	float mCurrentXPercent;
 
+	float mLaserRechargeTime;
+	float mLaserTime;
+	float mLaserPercentage;
+	bool mLaserNeedsRecharging;
+	float mDesiredlaserLength;
 	float mTurretScaleY;
 
 };

@@ -79,7 +79,7 @@ protected:
 	void createFrameListener(void);
 
 
-	void startGame();
+	void startGame(char *levenName, bool doEdit = false);
 	void startRace();
     void setupMenus(bool login = true) ;
 	void createStores(Menu *parent, std::vector<Store *> &stores);

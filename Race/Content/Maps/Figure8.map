@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Map>
+	<Config>
+        <Mode>Race</Mode>
+		<AllowGun>false</AllowGun>
+    </Config>
+	
+
+	
+	
+	<Gates>
+<Gate> <Position X = "4000.0" Y="0" Z="4000.0"/> </Gate>
+<Gate> <Position X = "3617.31656763" Y="0" Z="3923.87953251"/> </Gate>
+<Gate> <Position X = "3292.89321881" Y="0" Z="3707.10678119"/> </Gate>
+<Gate> <Position X = "3076.12046749" Y="0" Z="3382.68343237"/> </Gate>
+<Gate> <Position X = "3000.0" Y="0" Z="3000.0"/> </Gate>
+<Gate> <Position X = "3076.12046749" Y="0" Z="2617.31656763"/> </Gate>
+<Gate> <Position X = "3292.89321881" Y="0" Z="2292.89321881"/> </Gate>
+<Gate> <Position X = "3617.31656763" Y="0" Z="2076.12046749"/> </Gate>
+<Gate> <Position X = "4000.0" Y="0" Z="2000.0"/> </Gate>
+<Gate> <Position X = "4382.68343237" Y="0" Z="2076.12046749"/> </Gate>
+<Gate> <Position X = "4707.10678119" Y="0" Z="2292.89321881"/> </Gate>
+<Gate> <Position X = "4923.87953251" Y="0" Z="2617.31656763"/> </Gate>
+<Gate> <Position X = "5000.0" Y="0" Z="3000.0"/> </Gate>
+<Gate> <Position X = "4923.87953251" Y="0" Z="3382.68343237"/> </Gate>
+<Gate> <Position X = "4707.10678119" Y="0" Z="3707.10678119"/> </Gate>
+<Gate> <Position X = "4382.68343237" Y="0" Z="3923.87953251"/> </Gate>
+<Gate> <Position X = "4000.0" Y="0" Z="4000.0"/> </Gate>
+<Gate> <Position X = "3617.31656763" Y="0" Z="4076.12046749"/> </Gate>
+<Gate> <Position X = "3292.89321881" Y="0" Z="4292.89321881"/> </Gate>
+<Gate> <Position X = "3076.12046749" Y="0" Z="4617.31656763"/> </Gate>
+<Gate> <Position X = "3000.0" Y="0" Z="5000.0"/> </Gate>
+<Gate> <Position X = "3076.12046749" Y="0" Z="5382.68343237"/> </Gate>
+<Gate> <Position X = "3292.89321881" Y="0" Z="5707.10678119"/> </Gate>
+<Gate> <Position X = "3617.31656763" Y="0" Z="5923.87953251"/> </Gate>
+<Gate> <Position X = "4000.0" Y="0" Z="6000.0"/> </Gate>
+<Gate> <Position X = "4382.68343237" Y="0" Z="5923.87953251"/> </Gate>
+<Gate> <Position X = "4707.10678119" Y="0" Z="5707.10678119"/> </Gate>
+<Gate> <Position X = "4923.87953251" Y="0" Z="5382.68343237"/> </Gate>
+<Gate> <Position X = "5000.0" Y="0" Z="5000.0"/> </Gate>
+<Gate> <Position X = "4923.87953251" Y="0" Z="4617.31656763"/> </Gate>
+<Gate> <Position X = "4707.10678119" Y="0" Z="4292.89321881"/> </Gate>
+<Gate> <Position X = "4382.68343237" Y="0" Z="4076.12046749"/> </Gate>
+
+
+		</Gates>
+	<Walls>
+
+
+		</Walls>		
+</Map>

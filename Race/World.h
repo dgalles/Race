@@ -32,12 +32,18 @@ public:
 	void Think(float time);
 
 	int worldRand();
-	void StartGame();
+	void StartGame(char *worldName, bool doEdit = false);
 
 	RaceCamera *getCamera() { return mCamera; }
 	void LoadMap(std::string map);
+	void destroyWorld();
+	void enemyDestroyed(float value);
 
 protected:
+	void doEdit(float time);
+	void SaveFile(char *filename);
+	void unselectAll();
+	void reloadForEdit();
 
 	void PointArrowAt(Ogre::Vector3 pos);
 
@@ -46,6 +52,8 @@ protected:
 	Race *mBase;
 	HUD *mHUD;
 	Player *mPlayer;
+
+	float mDisp;
 
     std::vector<GameObject *> mDynamicObjects;
     std::vector<GameObject *> mStaticObjects;
@@ -65,4 +73,18 @@ protected:
 	AIManager *mAIManager;
 	bool mGameRunning;
 	bool mWorldLoaded;
+	float mCurrentTime;
+	bool mEditing;
+	
+	GameObject *mCurrentEditObject;
+
+	int mCurrentGateIndex;
+	int mCurrentStaticIndex;
+	int mCurrentDynamicIndex;
+
+	enum ObjectSelect {GATE, STATIC, DYNAMIC};
+	ObjectSelect mSelectedType;
+
+	float mPlacementScale;
+
 };

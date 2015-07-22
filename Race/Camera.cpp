@@ -4,6 +4,7 @@
 #include "OgreVector3.h"
 #include "Player.h"
 #include "GameObject.h"
+#include "InputHandler.h"
 
 RaceCamera::RaceCamera(Ogre::Camera *renderCamera) :
 mRenderCamera(renderCamera), mCurrentTrackingObject(0), mReview(false)
@@ -19,6 +20,7 @@ mRenderCamera(renderCamera), mCurrentTrackingObject(0), mReview(false)
 
 	mOrbitDegree = 0;
 	mShakeTime = 0;
+	mAllowCameraMovement = true;
 	// Any other initialization that needs to happen
 }
 
@@ -76,6 +78,56 @@ void RaceCamera::Shake(float time)
 void
 RaceCamera::Think(float time)
 {
+
+
+	if (mAllowCameraMovement)
+	{
+		InputHandler *ih = InputHandler::getInstance();
+
+		if (ih->IsKeyDown(OIS::KC_NUMPAD4))
+		{
+			mOrbitDegree += time * 20;
+
+		}
+		if (ih->IsKeyDown(OIS::KC_NUMPAD6))
+		{
+			mOrbitDegree -= time * 20;
+		}
+		float mult = time * 100;
+		if (ih->IsKeyDown(OIS::KC_LSHIFT))
+		{
+			mult *= 10;
+		}
+
+
+		if (ih->IsKeyDown(OIS::KC_NUMPAD8) && ih->IsKeyDown(OIS::KC_RSHIFT))
+		{
+			mCurrentFollowDistance += mult;
+		}
+		if (ih->IsKeyDown(OIS::KC_NUMPAD2) && ih->IsKeyDown(OIS::KC_RSHIFT))
+		{
+			mCurrentFollowDistance -= mult;
+		}
+		if (ih->IsKeyDown(OIS::KC_NUMPAD8) && !ih->IsKeyDown(OIS::KC_RSHIFT))
+		{
+			mCurrentFollowHeight += mult;
+		}
+		if (ih->IsKeyDown(OIS::KC_NUMPAD2) && !ih->IsKeyDown(OIS::KC_RSHIFT))
+		{
+			mCurrentFollowHeight -= mult;
+		}
+
+
+		if (ih->IsKeyDown(OIS::KC_NUMPAD5))
+		{
+			mCurrentFollowDistance = 200;
+			mCurrentFollowHeight = 50;
+			mOrbitDegree = 0;
+
+		}
+
+	}
+
 	if (mCurrentTrackingObject != 0)
 	{
 

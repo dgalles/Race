@@ -2,6 +2,7 @@
 #include "World.h"
 #include "Enemy.h"
 #include "OgreSceneManager.h"
+#include "HUD.h"
 
 AIManager::AIManager(World *world, Ogre::SceneManager *sm) : mWorld(world), mSceneManager(sm)
 {
@@ -23,41 +24,50 @@ AIManager::Think(float time)
 			}
 }
 
-void AIManager::rayCollision(Ogre::Vector3 rayStart, Ogre::Vector3 rayDirection, float &dist)
+
+void AIManager::rayCollision(Ogre::Vector3 rayStart, Ogre::Vector3 rayDirection, float &dist, float damage)
 {
+	std::vector<Enemy *>dead;
+
 	for (std::vector<Enemy *>::iterator it = mEnemies.begin(); it != mEnemies.end(); it++)
 	{
 		if ((*it)->collides(rayStart, rayDirection, dist))
 		{
-			(*it)->setMaterial("simpleRed");
 
-		}
-		else
-		{
-			(*it)->restoreOriginalMaterial();
+			(*it)->decreaseHealth(damage);
+			mWorld->getHUD()->setDebug((*it)->getHealth(), "Health");
+			if ((*it)->isDead())
+			{
+				dead.push_back(*it);
+				mWorld->enemyDestroyed((*it)->getValue());
+			}
 
 		}
 	}
+	for (std::vector<Enemy *>::iterator it = dead.begin(); it != dead.end(); it++)
+	{
+		mEnemies.erase(std::remove(mEnemies.begin(), mEnemies.end(), (*it)),mEnemies.end());
+		delete			(*it);
+	}
+
 
 }
 
-void AIManager::rayCollision(Ogre::Vector3 rayStart, Ogre::Vector3 rayDirection)
+void AIManager::destroyEnemies()
 {
 	for (std::vector<Enemy *>::iterator it = mEnemies.begin(); it != mEnemies.end(); it++)
 	{
-		float dummy =  std::numeric_limits<float>::max();
-		if ((*it)->collides(rayStart, rayDirection, dummy))
-		{
-			(*it)->setMaterial("simpleRed");
-
-		}
-		else
-		{
-			(*it)->restoreOriginalMaterial();
-
-		}
+		delete (*it);
 	}
+	mEnemies.clear();
+}
 
+
+
+void AIManager::rayCollision(Ogre::Vector3 rayStart, Ogre::Vector3 rayDirection, float damage)
+{
+	float dummy =  std::numeric_limits<float>::max();
+	rayCollision(rayStart, rayDirection, dummy, damage);
 }
 
 

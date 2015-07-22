@@ -19,99 +19,38 @@ material ArmorMat2
 }
 
 
-material LeftArrow 
+material LaserPowerRecharge
 {
-    receive_shadows on 
-
-    technique
-    {
-        pass 
-        {
-			scene_blend alpha_blend
-            texture_unit 
-            {
-                texture LeftArrow.png
-                scale 1.0 1.0
-                colour_op modulate
-            }
-        }
-    }
+   technique
+   {
+     pass
+     {
+       scene_blend alpha_blend
+       depth_write off
+ 
+       texture_unit
+       {
+         colour_op_ex source1 src_manual src_current 1 0 0
+         alpha_op_ex source1 src_manual src_current 1
+       }
+     }
+   }
 }
 
-material RightArrow 
+material LaserPowerOK
 {
-    receive_shadows on 
-
-    technique
-    {
-        pass
-        {
-			scene_blend alpha_blend
-            texture_unit 
-            {
-                texture RightArrow.png
-                scale 1.0 1.0
-                colour_op modulate
-            }
-        }
-    }
-}
-
-
-material UpArrow 
-{
-    receive_shadows on 
-
-    technique
-    {
-        pass 
-        {
-			scene_blend alpha_blend
-            texture_unit 
-            {
-                texture UpArrow.png
-                scale 1.0 1.0
-                colour_op modulate
-            }
-        }
-    }
-}
-
-material DownArrow 
-{
-    receive_shadows on 
-
-    technique
-    {
-        pass 
-        {
-			scene_blend alpha_blend
-            texture_unit 
-            {
-                texture DownArrow.png
-                scale 1.0 1.0
-                colour_op modulate
-            }
-        }
-    }
-}
-
-
-material CenterArrow 
-{
-    receive_shadows on 
-
-    technique
-    {
-        pass 
-        {
-			scene_blend alpha_blend
-            texture_unit 
-            {
-                texture CenterArrow.png
-                scale 1.0 1.0
-                colour_op modulate
-            }
-        }
-    }
+   technique
+   {
+     pass
+     {
+       scene_blend alpha_blend
+       depth_write off
+ 
+       texture_unit
+       {
+         colour_op_ex source1 src_manual src_current 0 1 0
+         alpha_op_ex source1 src_manual src_current 1
+       }
+     }
+   }
 }
