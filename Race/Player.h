@@ -43,6 +43,12 @@ public:
 
 	void setStopOnFiring(bool stopOnFiring) { mStopOnFiring = stopOnFiring;}
 	bool getStopOnFiring() { return mStopOnFiring; }
+
+	void setNoTurnOnFiring(bool noTurnFire) { mNoTurnFire = noTurnFire;}
+	bool getNoTurnOnFiring() { return mNoTurnFire; }
+
+
+
 	void setOrientation(Ogre::Quaternion newOrientation);
 
 	bool getLaserAllowed() { return mLaserAllowed; }
@@ -77,6 +83,7 @@ protected:
 	World *mWorld;
 	Kinect *mKinect;
 	bool mIsFiringLaser;
+	int mLaserSoundHandle;
 
 	float mAccel;
 
@@ -100,6 +107,7 @@ protected:
 	Ogre::SceneNode *mTurretSceneNode;
 	Ogre::SceneNode *mLaserSceneNode;
 	bool mStopOnFiring;
+	bool mNoTurnFire;
 
 	float mLaserDPS;
 	float mCurrentYPercent;

@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+	<Map> 
+
+
+	<Config>
+        <Mode>Target</Mode>
+		<AllowGun>true</AllowGun>
+		<RestrictGunElevation>false</RestrictGunElevation>
+    </Config>
+	
+	
+<Enemies> 
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="7556" Y="80" Z="1071" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="6849" Y="100" Z="889" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="6929" Y="200" Z="337" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="7064" Y="20" Z="1226" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="6638" Y="300" Z="670" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="7170" Y="150" Z="1786" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="6701" Y="220" Z="1352" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="7124" Y="400" Z="2399" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="7051" Y="300" Z="7239" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="7092" Y="100" Z="7460" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="7512" Y="400" Z="6987" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="6488" Y="300" Z="7660" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="6434" Y="30" Z="6988" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="6865" Y="75" Z="6405" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="7425" Y="32" Z="5991" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="7212" Y="220" Z="5279" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="6975" Y="60" Z="6713" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="686" Y="300" Z="907" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="632" Y="250" Z="479" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="293" Y="350" Z="749" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="1170" Y="200" Z="496" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="1288" Y="100" Z="1129" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="861" Y="80" Z="1502" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="487" Y="300" Z="1422" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="1607" Y="80" Z="849" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="1589" Y="350" Z="1365" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="1642" Y="40" Z="6423" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="1483" Y="300" Z="6903" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="992" Y="80" Z="6787" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="795" Y="200" Z="6280" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="2205" Y="80" Z="7254" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="1548" Y="300" Z="7406" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="777" Y="80" Z="7597" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="324" Y="200" Z="7281" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="340" Y="100" Z="6630" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="2098" Y="300" Z="6674" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>80</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="1806" Y="250" Z="7357" />
+  </Target>
+</Enemies> 
+<Gates> 
+</Gates> 
+<Walls> 
+  <Wall>
+     <Position X="7305" Y="0" Z="2981" />
+     <Scale>50</Scale>
+     <Rotation>82.4476</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="6208" Y="0" Z="2613" />
+     <Scale>50</Scale>
+     <Rotation>53.6895</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="5481" Y="0" Z="1903" />
+     <Scale>50</Scale>
+     <Rotation>41.1332</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="4952" Y="0" Z="1027" />
+     <Scale>50</Scale>
+     <Rotation>18.0014</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="7164" Y="0" Z="4806" />
+     <Scale>50</Scale>
+     <Rotation>-69.8457</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="6330" Y="0" Z="5432" />
+     <Scale>50</Scale>
+     <Rotation>-46.8509</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="5812" Y="0" Z="6218" />
+     <Scale>50</Scale>
+     <Rotation>-23.3159</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="5623" Y="0" Z="7275" />
+     <Scale>50</Scale>
+     <Rotation>-9.63584</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="2663" Y="0" Z="438" />
+     <Scale>50</Scale>
+     <Rotation>176.62</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="2356" Y="0" Z="1300" />
+     <Scale>50</Scale>
+     <Rotation>141.117</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="1511" Y="0" Z="2113" />
+     <Scale>50</Scale>
+     <Rotation>128.158</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="494" Y="0" Z="2671" />
+     <Scale>50</Scale>
+     <Rotation>110.898</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="3251" Y="0" Z="7397" />
+     <Scale>50</Scale>
+     <Rotation>5.62002</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="3104" Y="0" Z="6747" />
+     <Scale>50</Scale>
+     <Rotation>18.2218</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="2202" Y="0" Z="5684" />
+     <Scale>50</Scale>
+     <Rotation>70.2994</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="1077" Y="0" Z="5339" />
+     <Scale>50</Scale>
+     <Rotation>77.3675</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+</Walls> 
+</Map> 
+

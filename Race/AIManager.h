@@ -28,6 +28,8 @@ public:
 	const Enemy *getEnemy(int index) { return mEnemies[index]; }
 	unsigned int numEnemies() { return mEnemies.size(); }
 
+	const Enemy *getClosestEnemy(Ogre::Vector3 position);
+
 
 protected:
 	World *mWorld;

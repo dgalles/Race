@@ -35,3 +35,20 @@ material Skybox/SpaceSkyBox
 	}
 }
  
+ material Skybox/Sky1
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			depth_write off
+
+			texture_unit
+			{
+				cubic_texture Sky.jpg separateUV
+				tex_address_mode clamp
+			}
+		}
+	}
+}

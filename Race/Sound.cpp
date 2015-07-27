@@ -1,9 +1,7 @@
- #include "OgreResourceGroupManager.h"
-
 
 #include "Sound.h"
 #include "SDL.h"
-
+#include "FileUtil.h"
 SoundChunk::SoundChunk(Mix_Chunk* c)
 {
 	mChunk = c;
@@ -30,6 +28,17 @@ void SoundChunk::play()
 	mCurrentChanel = Mix_PlayChannel(-1, mChunk, 0);
 }
 
+
+void SoundChunk::stop()
+{
+	if (mCurrentChanel >= 0)
+	{
+		Mix_HaltChannel(mCurrentChanel);
+		mCurrentChanel = -1;
+
+	}
+
+}
 
 void SoundChunk::fadeIn(int ms, bool repeat)
 {
@@ -94,7 +103,17 @@ SoundBank::~SoundBank()
 }
 
 
-
+void SoundBank::stopAllSounds()
+{
+	//for(unsigned int i = 0; i < mChunks.size(); i++)
+	//{
+	//	for (std::map<std::string, SoundChunk*>::iterator it = mChunks[i].begin(); it != mChunks[i].end(); it++)
+	//	{
+	//		(*it).second->fadeOut(0);
+	//	}
+	//}
+	Mix_HaltGroup(-1);
+}
 void SoundBank::setup()
 {
 	SDL_Init(SDL_INIT_AUDIO);
@@ -137,6 +156,10 @@ void SoundBank::setup()
 
 
 
+	openFile("bell.ogg", "clearGate", 0);
+	openFile("Laser.ogg", "laser", 0);
+	openFile("SmallExplode.ogg", "explode1", 0);
+	openFile("Fire.ogg", "fire", 0);
 
 
 	Mix_Volume(-1, mVolume);
@@ -203,6 +226,15 @@ void SoundBank::fadeOut(std::string id, int ms)
 	}
 }
 
+void SoundBank::stop(std::string id)
+{
+	if (mSoundEnabled && mSoundAvailable)
+	{
+		mChunks[mSoundIndex][id]->stop();
+	}
+}
+
+
 void SoundBank::addSound(SoundChunk* s, std::string id, int index)
 {
 	mChunks[index][id] = s;
@@ -214,19 +246,35 @@ void SoundBank::removeSound(std::string id){
 
 void SoundBank::openFile(std::string path, std::string id, int index)
 {
-	std::string foundPath = path;
-	Ogre::ResourceGroupManager* groupManager = Ogre::ResourceGroupManager::getSingletonPtr() ;
-	Ogre::String group = groupManager->findGroupContainingResource(path) ;
-	Ogre::FileInfoListPtr fileInfos = groupManager->findResourceFileInfo(group,foundPath);
-	Ogre::FileInfoList::iterator it = fileInfos->begin();
-	if(it != fileInfos->end())
-	{
-		foundPath = it->archive->getName() + "/" + foundPath;
-	}
-	else
-	{
-		foundPath = "";
-	}
+	
+	std::string foundPath = FileUtil::getFullPath(path);
 
 	this->addSound(new SoundChunk(foundPath), id, index);
 }
+
+
+int SoundBank::fadeInManual(std::string play, int ms, bool repeat)
+{
+	int channel = -1;
+	if (repeat)
+	{
+
+		channel =  Mix_FadeInChannel(-1,mChunks[mSoundIndex][play]->mChunk,-1, ms);
+	}
+	else
+	{
+		channel =  Mix_FadeInChannel(-1,mChunks[mSoundIndex][play]->mChunk,0, ms);
+	}
+	return channel;
+
+}
+	void SoundBank::fadeOutManual(int channel, int ms)
+	{
+				Mix_FadeOutChannel(channel, ms);
+
+	}
+	void SoundBank::stopManual(int channel)
+	{
+		Mix_HaltChannel(channel);
+
+	}

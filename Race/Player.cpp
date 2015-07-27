@@ -1,3 +1,4 @@
+#define NOMINMAX
 
 #include "Player.h"
 #include "World.h"
@@ -7,9 +8,8 @@
 #include "HUD.h"
 #include "OgreSceneManager.h"
 #include "OgreEntity.h"
-#include "OgreParticleSystem.h"
 #include "OgreManualObject.h"
-
+#include "Sound.h"
 
 #include "Camera.h"
 
@@ -63,7 +63,9 @@ Player::Player(World *world, Kinect *k, Achievements *ach) :
 	GameObject(GameObject::PLAYER), mWorld(world), mKinect(k), mAchievements(ach)
 {
 
-	mStopOnFiring = false;
+	mStopOnFiring = true;
+	mNoTurnFire = true;
+	mIsFiringLaser = true;
 	mCurrentYPercent = 0;
 	mCurrentXPercent = 0.5f;
 
@@ -100,7 +102,7 @@ Player::Player(World *world, Kinect *k, Achievements *ach) :
 
 	mBarrelSceneNode->setScale(1,1,mTurretScaleY);
 	mTurretSceneNode->setScale(1,mTurretScaleY,1);
-
+	mLaserSoundHandle = -1;
 
 	reset();
 }
@@ -109,7 +111,7 @@ Player::Player(World *world, Kinect *k, Achievements *ach) :
 void Player::reset()
 {
 	mInvertControls = false;
-	mEnableKeyboard = true;
+	mEnableKeyboard = false;
 	mEnableKinect = true;
 	mKinectSensitivityFB = 1.0f;
 	mKinectSensitivityLR = 1.0f;
@@ -118,8 +120,8 @@ void Player::reset()
 	mSpeed = 0;
 
 	mAccel = 10;
-	mLaserRechargeTime = 5;
-	mLaserTime = 5;
+	mLaserRechargeTime = 2;
+	mLaserTime = 10;
 	mLaserPercentage = 1;
 	mDesiredlaserLength = 500;
 	mLaserNeedsRecharging = false;
@@ -181,6 +183,11 @@ void Player::Think(float time)
 		}
 	}
 
+	if (mStopOnFiring && mTurretScaleY > 0)
+	{
+		mSpeed = 0;
+	}
+
 	mSpeed +=frontBack.valueDegrees() * time * -mAccel;
 	if (mSpeed > mMaxSpeed)
 	{
@@ -216,13 +223,14 @@ void Player::Think(float time)
 			mLaserNeedsRecharging = true;
 		}
 		mWorld->getHUD()->setLaserPower(mLaserPercentage, mLaserNeedsRecharging);
+
 		mLaserSceneNode->roll(Ogre::Degree(time *180));
 
-		if (mStopOnFiring)
+		if (!mIsFiringLaser)
 		{
-			mSpeed = 0;
+			mLaserSoundHandle = SoundBank::getInstance()->fadeInManual("laser",10,true);
+			mIsFiringLaser = true;
 		}
-		mIsFiringLaser = true;
 	}
 	else
 	{
@@ -234,14 +242,19 @@ void Player::Think(float time)
 			mLaserNeedsRecharging = false;
 		}
 		mWorld->getHUD()->setLaserPower(mLaserPercentage,mLaserNeedsRecharging);
+		if (mIsFiringLaser && mLaserSoundHandle >= 0)
+		{
+			SoundBank::getInstance()->fadeOutManual(mLaserSoundHandle,10);
+			mLaserSoundHandle = -1;
+		}
+		mIsFiringLaser = false;
 
-			mIsFiringLaser = false;
 	}
 
 	mWorld->getHUD()->setSpeed((int) mSpeed);
 
 
-	if (Ogre::Math::Abs(leftRight) > Ogre::Degree(10))
+	if (Ogre::Math::Abs(leftRight) > Ogre::Degree(10) && (mTurretScaleY == 0.0f || !mNoTurnFire))
 	{
 		Ogre::Degree change = leftRight * time * - mDegreesPerSecond / 30.0f;
 		yaw(change);
@@ -338,12 +351,12 @@ void Player::updateAnglesFromControls(Ogre::Degree &angle, Ogre::Degree &angle2,
 
 
 	}
-	if (!mUseFrontBack)
-	{
-		angle2 = Ogre::Degree(0);
-	}
-	if (mInvertControls)
-	{
-		angle2 = -angle2;
-	}
+	//if (!mUseFrontBack)
+	//{
+	//	angle2 = Ogre::Degree(0);
+	//}
+	//if (mInvertControls)
+	//{
+	//	angle2 = -angle2;
+	//}
 }

@@ -32,18 +32,22 @@ public:
 	void Think(float time);
 
 	int worldRand();
-	void StartGame(char *worldName, bool doEdit = false);
+	void StartGame(const char *worldName, bool doEdit = false);
 
 	RaceCamera *getCamera() { return mCamera; }
 	void LoadMap(std::string map);
 	void destroyWorld();
 	void enemyDestroyed(float value);
+	int getNumLaps() { return mNumLaps; }
+	void setNumLaps(int laps) { mNumLaps = laps; }
 
 protected:
 	void doEdit(float time);
 	void SaveFile(char *filename);
 	void unselectAll();
 	void reloadForEdit();
+
+	void finishRace();
 
 	void PointArrowAt(Ogre::Vector3 pos);
 
@@ -52,6 +56,8 @@ protected:
 	Race *mBase;
 	HUD *mHUD;
 	Player *mPlayer;
+
+	int mNumLaps;
 
 	float mDisp;
 
@@ -62,6 +68,7 @@ protected:
 	int mSeed;
 	int goalIndex;
 	std::vector<Ogre::Vector3> mGoalPositions;
+	std::vector<float> mGoalScales;
 	std::vector<Ogre::Quaternion> mGoalOrientations;
 	int mCurrentIndex ;
 	Ogre::SceneNode *mArrowNode;
@@ -78,6 +85,8 @@ protected:
 	
 	GameObject *mCurrentEditObject;
 
+	int mCurrentLap;
+
 	int mCurrentGateIndex;
 	int mCurrentStaticIndex;
 	int mCurrentDynamicIndex;
@@ -85,6 +94,9 @@ protected:
 	enum ObjectSelect {GATE, STATIC, DYNAMIC};
 	ObjectSelect mSelectedType;
 
+	enum GameType {RACE, TARGET};
+	GameType mGameType;
+	int mInitialTargets;
 	float mPlacementScale;
 
 };

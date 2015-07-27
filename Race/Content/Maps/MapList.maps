@@ -1,0 +1,11 @@
+
+<Maps>
+	<Map Name = "Figure 8">Figure8.map</Map>
+	<Map Name = "Maze 1">Level2.map</Map>	
+	<Map Name = "Race Track">Track2.map</Map>	
+	<Map Name = "Target Practice 1">Targets1.map</Map>
+	<Map Name = "Target Practice 2">Targets2.map</Map>
+	<Map Name = "Target Hunt 1">Targets3.map</Map>
+		<Map Name = "Tiny  1">tiny.map</Map>
+
+</Maps>

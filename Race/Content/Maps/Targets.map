@@ -2,7 +2,7 @@
 <Map>
 	<Config>
         <Mode>Race</Mode>
-		<AllowGun>false</AllowGun>
+		<AllowGun>true</AllowGun>
 		<RestrictGunElevation>true</RestrictGunElevation>
     </Config>
 	

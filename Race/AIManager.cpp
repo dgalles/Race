@@ -3,6 +3,7 @@
 #include "Enemy.h"
 #include "OgreSceneManager.h"
 #include "HUD.h"
+#include "Sound.h"
 
 AIManager::AIManager(World *world, Ogre::SceneManager *sm) : mWorld(world), mSceneManager(sm)
 {
@@ -25,6 +26,32 @@ AIManager::Think(float time)
 }
 
 
+// TODO:  Make this more efficient!
+const Enemy *AIManager::getClosestEnemy(Ogre::Vector3 position)
+{
+	Enemy *closestEnemy = NULL;
+	float closestSquaredDist = 0.0f;
+	for (std::vector<Enemy *>::iterator it = mEnemies.begin(); it != mEnemies.end(); it++)
+	{
+		if (closestEnemy == NULL)
+		{
+			closestEnemy = (*it);
+			closestSquaredDist = (*it)->getPosition().squaredDistance(position);
+		}
+		else
+		{
+			float squareDist = (*it)->getPosition().squaredDistance(position);
+			if (squareDist < closestSquaredDist)
+			{
+				closestSquaredDist = squareDist;
+				closestEnemy = (*it);
+			}
+		}
+
+	}
+	return closestEnemy;
+}
+
 void AIManager::rayCollision(Ogre::Vector3 rayStart, Ogre::Vector3 rayDirection, float &dist, float damage)
 {
 	std::vector<Enemy *>dead;
@@ -33,11 +60,12 @@ void AIManager::rayCollision(Ogre::Vector3 rayStart, Ogre::Vector3 rayDirection,
 	{
 		if ((*it)->collides(rayStart, rayDirection, dist))
 		{
-
 			(*it)->decreaseHealth(damage);
-			mWorld->getHUD()->setDebug((*it)->getHealth(), "Health");
+
+		//	mWorld->getHUD()->setDebug((*it)->getHealth(), "Health");
 			if ((*it)->isDead())
 			{
+				SoundBank::getInstance()->play("explode1");
 				dead.push_back(*it);
 				mWorld->enemyDestroyed((*it)->getValue());
 			}

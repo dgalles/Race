@@ -74,8 +74,8 @@ protected:
 	bool mCallibrated;
 
 
-	Ogre::Vector3 mLeftWristPos;
-	Ogre::Vector3 mRightWristPos;
+	Ogre::Vector3 mLeftHandPos;
+	Ogre::Vector3 mRightHandPos;
 	Ogre::Vector3 mCenterPos;
 
 

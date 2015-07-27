@@ -1,0 +1,100 @@
+<Map> 
+
+	<Config>
+        <Mode>Race</Mode>
+		<AllowGun>false</AllowGun>
+		<RestrictGunElevation>false</RestrictGunElevation>
+    </Config>
+<Enemies> 
+</Enemies> 
+<Gates> 
+  <Gate>
+     <Position X="3958" Y="0" Z="3214" />
+	 <Scale>100</Scale>
+  </Gate>
+  <Gate>
+     <Position X="5250" Y="0" Z="3241" />
+	 <Scale>100</Scale>
+  </Gate>
+  <Gate>
+     <Position X="6144" Y="0" Z="3948" />
+	 <Scale>100</Scale>
+  </Gate>
+  <Gate>
+     <Position X="6189" Y="0" Z="5244" />
+	 <Scale>100</Scale>
+  </Gate>
+  <Gate>
+     <Position X="5438" Y="0" Z="6093" />
+	 <Scale>100</Scale>
+  </Gate>
+  <Gate>
+     <Position X="4124" Y="0" Z="6299" />
+	 <Scale>100</Scale>
+  </Gate>
+  <Gate>
+     <Position X="2789" Y="0" Z="5541" />
+	 <Scale>100</Scale>
+  </Gate>
+  <Gate>
+     <Position X="2693" Y="0" Z="4091" />
+	 <Scale>100</Scale>
+  </Gate>
+</Gates> 
+<Walls> 
+  <Wall>
+     <Position X="6301" Y="0" Z="3705" />
+     <Scale>111</Scale>
+     <Rotation>22.4853</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="4214" Y="0" Z="6649" />
+     <Scale>111</Scale>
+     <Rotation>-124.59</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="2452" Y="0" Z="5390" />
+     <Scale>111</Scale>
+     <Rotation>-177.215</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="2489" Y="0" Z="3946" />
+     <Scale>111</Scale>
+     <Rotation>133.049</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="3896" Y="0" Z="2983" />
+     <Scale>111</Scale>
+     <Rotation>87.5656</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="5335" Y="0" Z="2999" />
+     <Scale>111</Scale>
+     <Rotation>69.4202</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="6509" Y="0" Z="5262" />
+     <Scale>111</Scale>
+     <Rotation>-42.9083</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="6509" Y="0" Z="5262" />
+     <Scale>111</Scale>
+     <Rotation>-42.9083</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="5595" Y="0" Z="6303" />
+     <Scale>111</Scale>
+     <Rotation>-78.7329</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+</Walls> 
+</Map> 

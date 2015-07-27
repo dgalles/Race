@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "GameObject.h"
 #include "WaterMesh.h"
+#include "Menu.h"
 
 #include "OgreOverlay.h"
 #include "OgreOverlayManager.h"
@@ -15,7 +16,7 @@
 #include "tinyxml.h"
 #include "FileUtil.h"
 #include "AIManager.h"
-
+#include "Sound.h"
 #include <iostream>
 #include <fstream>
 
@@ -24,7 +25,7 @@
 
 #define MESH_NAME "WaterMesh"
 #define ENTITY_NAME "WaterEntity"
-#define MATERIAL_NAME "Examples/Water8"
+#define MATERIAL_NAME "Water/Water1"
 #define COMPLEXITY 128 		// watch out - number of polys is 2*ACCURACY*ACCURACY !
 #define PLANE_SIZE 8000
 
@@ -116,7 +117,7 @@ bool getSafeFloat(TiXmlElement *elem, char *name,float &floatVal)
 
 void World::LoadMap(std::string mapName)
 {
-	TiXmlDocument doc(FileUtil::getFullPath(mapName + ".map").c_str());
+	TiXmlDocument doc(FileUtil::getFullPath(mapName).c_str());
 	if(!doc.LoadFile(TIXML_ENCODING_UTF8)) {
 		return;
 	}
@@ -131,19 +132,39 @@ void World::LoadMap(std::string mapName)
 	hRoot = TiXmlHandle(map);
 
 
-
+	bool restrictElev = false;
+	bool useGun = true;
+		 const char *mode = "Race";
 	TiXmlElement *config = hRoot.FirstChildElement("Config").Element();
 	if (config)
-	{
-		 bool restrictElev = false;
+	{ 
+		 getSafeString(config, "Mode", mode, "Race");
 		 getSafeBool(config, "RestrictGunElevation", restrictElev);
-		 mPlayer->setLaserAimVertical(!restrictElev);
-
-		 bool useGun = true;
 		 getSafeBool(config, "AllowGun", useGun);
-		 mPlayer->setLaserAllowed(useGun);
-
+		
 	}
+	std::string text(mode);
+	std::transform(text.begin(), text.end(), text.begin(), ::toupper);
+
+	if (text.compare(std::string("RACE")) == 0)
+	{
+		mGameType = GameType::RACE;
+		mHUD->setRaceDisplay();
+	}
+	else if  (text.compare(std::string("TARGET")) == 0)
+	{
+		mGameType = GameType::TARGET;
+		mHUD->setTargetDisplay();
+	}
+	else
+	{
+		// Throw here?
+	}
+
+	mPlayer->setLaserAimVertical(!restrictElev);
+	mPlayer->setLaserAllowed(useGun);
+	std::transform(text.begin(), text.end(), text.begin(), ::toupper);
+
 
 
 
@@ -197,7 +218,7 @@ void World::LoadMap(std::string mapName)
 
 
 	TiXmlElement *Enemies = hRoot.FirstChildElement("Enemies").Element();
-
+	mInitialTargets = 0;
 	if (Enemies != NULL)
 	{
 		for (TiXmlElement *enemy = Enemies->FirstChildElement(); enemy; enemy = enemy->NextSiblingElement()) 
@@ -212,6 +233,7 @@ void World::LoadMap(std::string mapName)
 			getSafeVector3(enemy, "Position", nextPos);
 
 			mAIManager->AddEnemy(type, nextPos,modelName, scale);
+			mInitialTargets++;
 		}
 	}
 
@@ -228,6 +250,10 @@ void World::LoadMap(std::string mapName)
 		Ogre::Quaternion orent = Ogre::Quaternion::IDENTITY;
 		getSafeVector3(gate, "Position", nextPos);
 		mGoalPositions.push_back(nextPos);
+		float scale = 60.0f;
+		getSafeFloat(gate, "Scale", scale);
+		mGoalScales.push_back(scale);
+		
 
 	}
 	}
@@ -266,7 +292,7 @@ void World::LoadMap(std::string mapName)
 	for (unsigned int i = 0; i < mNumGoalsToShow && i < mGoalPositions.size(); i++)
 	{
 		GameObject *goal = new GameObject(GameObject::GATE, "Goal.mesh",  mSceneManager,mGoalPositions[i],  mGoalOrientations[i]);
-		goal->setScale(60);
+		goal->setScale(mGoalScales[i]);
 		if (i == 0) 
 		{
 
@@ -317,14 +343,14 @@ World::World(Ogre::SceneManager *sceneManager, HUD *hud, RaceCamera * cam, Race 
 
 	arrowOverlay->show();
 
-	Ogre::Entity *arrowMesh = mSceneManager->createEntity("Arrow.mesh");
+	Ogre::Entity *arrowMesh = mSceneManager->createEntity("arrow2.mesh");
 	mArrowNode = mSceneManager->createSceneNode();
 	mArrowNode->attachObject(arrowMesh);
 
 	arrowOverlay->add3D(mArrowNode);
 	mArrowNode->setPosition(0, 3.3f,-10);
-	mArrowNode->pitch(Ogre::Degree(-90));
-	mArrowNode->roll(Ogre::Degree(90));
+	//mArrowNode->pitch(Ogre::Degree(-90));
+	//mArrowNode->roll(Ogre::Degree(90));
 	mWorldLoaded = false;
 
 	mWaterMesh = new WaterMesh(MESH_NAME, PLANE_SIZE, COMPLEXITY);
@@ -341,8 +367,10 @@ World::World(Ogre::SceneManager *sceneManager, HUD *hud, RaceCamera * cam, Race 
 	mNumGoalsToShow = 3;
 
 
-	mPlacementScale = 1.0f;
+	mPlacementScale = 50.0f;
 	mCurrentEditObject = 0;
+
+	mNumLaps = 1;
 
 	mSceneManager->setSkyBox(true, "Skybox/Cloudy");
 
@@ -369,6 +397,9 @@ void World::destroyWorld()
 		mStaticObjects.clear();
 		mGoals.clear();
 		mAIManager->destroyEnemies();
+		mGoalOrientations.clear();
+		mGoalScales.clear();
+		mGoalPositions.clear();
 		mWorldLoaded = false;
 
 }
@@ -413,7 +444,7 @@ void World::reloadForEdit()
 
 }
 
-void World::StartGame(char *worldname, bool doEdit)
+void World::StartGame(const char *worldname, bool doEdit)
 {
 	if (!mWorldLoaded)
 	{
@@ -434,11 +465,21 @@ void World::StartGame(char *worldname, bool doEdit)
 		mEditing = false;
 		if (mPlayer != NULL)
 		{
-			mPlayer->setOrientation(mGoalOrientations[0]);
-			mPlayer->setPosition(mGoalPositions[0] - mPlayer->getFacing() * 300);
+			if (mGoalOrientations.size() > 0)
+			{
+				mPlayer->setOrientation(mGoalOrientations[0]);
+				mPlayer->setPosition(mGoalPositions[0] - mPlayer->getFacing() * 300);
+			}
+			else
+			{
+				mPlayer->setPosition(Ogre::Vector3(4000,0,1000));
+
+			}
 		}
 		mCurrentTime = 0;
-
+		mCurrentLap = 1;
+		mHUD->setLap(mCurrentLap,mNumLaps);
+		mHUD->setGate(1,mGoalPositions.size());
 
 	}
 
@@ -460,7 +501,7 @@ void World::SaveFile(char *filename)
 		Ogre::Vector3 pos = (*it)->getPosition();
 		outFile << "  <Target>\n";
 		outFile << "    <Type>Target</Type> \n";
-		outFile << "    <Scale>20</Scale>\n";
+		outFile << "    <Scale>" << (*it)->getScale().x << "</Scale>\n";
 		outFile << "    <Model>Target.mesh</Model>\n";
 		outFile << "     <Position X=\"" << (int)(pos.x) << "\" Y=\"" << (int)(pos.y) << "\" Z=\"" <<  (int)(pos.z) << "\" />\n";
 		outFile << "  </Target>\n";	
@@ -488,7 +529,7 @@ void World::SaveFile(char *filename)
 		outFile << "     <Position X=\"" << (int)(pos.x) << "\" Y=\"" << (int)(pos.y) << "\" Z=\"" <<  (int)(pos.z) << "\" />\n";
 		outFile << "     <Scale>" << ob->getScale().x << "</Scale>\n";
 		outFile << "     <Rotation>" << q.getYaw().valueDegrees() << "</Rotation>\n";
-		outFile << "     <Model>Iceberg1.mesh</Model> \n";
+		outFile << "     <Model>" << ob->getModelName() << "</Model> \n";
 		outFile << "  </Wall>\n";	
 	}
 	outFile << "</Walls> \n";
@@ -527,10 +568,16 @@ void World::doEdit(float time)
 	Ogre::Vector3 left = Ogre::Vector3::UNIT_Y.crossProduct(facing);
 
 
-	if (!ih->IsKeyDown(OIS::KC_2))
+	if (ih->IsKeyDown(OIS::KC_SPACE))
 	{
+		if (mCurrentEditObject)
+		{
+			mCurrentEditObject->restoreOriginalMaterial();
+		}
 		mCurrentEditObject = NULL;
 	}
+
+
 
 	float mult = 200 * time;
 	if (ih->IsKeyDown(OIS::KC_LSHIFT))
@@ -565,10 +612,8 @@ void World::doEdit(float time)
 		mPlayer->yaw(Ogre::Degree(-45 * time), false);
 	}
 
-	// TODO:  Make this work with non-statics
 	if (mCurrentEditObject != NULL)
 	{
-		mCurrentEditObject->setScale(mPlacementScale);
 		Ogre::Vector3 pos = mPlayer->getPosition();
 		mCurrentEditObject->setPosition(mPlayer->getPosition());
 		Ogre::Quaternion orient(left, Ogre::Vector3::UNIT_Y, facing);
@@ -602,7 +647,7 @@ void World::doEdit(float time)
 		mHUD->setDebug(mPlayer->getPosition(), "Gate Placed");
 		GameObject *goal = new GameObject(GameObject::GATE, "Goal.mesh",  mSceneManager,mPlayer->getPosition(), Ogre::Quaternion::IDENTITY);
 		goal->setScale(60);
-		goal->setMaterial("simpleRed");
+		goal->setMaterial("selectMaterial");
 		mSelectedType = ObjectSelect::GATE;
 
 		if (mGoals.size() == 0)
@@ -652,7 +697,7 @@ void World::doEdit(float time)
 			}
 			if (mGoals.size() > 0)
 			{
-				mGoals[mCurrentGateIndex]->setMaterial("simpleRed");
+				mGoals[mCurrentGateIndex]->setMaterial("selectMaterial");
 			}
 			if (mCurrentGateIndex < (int) mGoals.size() - 1)
 			{
@@ -680,7 +725,16 @@ void World::doEdit(float time)
 			}
 			if ((int) mStaticObjects.size() > mCurrentStaticIndex)
 			{
-				mStaticObjects[mCurrentStaticIndex]->setMaterial("simpleRed");
+				//mStaticObjects[mCurrentStaticIndex]->setMaterial("selectMaterial");
+				//mCurrentEditObject = mStaticObjects[mCurrentStaticIndex];
+				//mPlayer->setPosition(mCurrentEditObject->getPosition());
+				//mPlayer->setOrientation(mCurrentEditObject->getOrientation());
+				mCurrentEditObject = NULL;
+
+			}
+			else 
+			{
+				mCurrentEditObject = NULL;
 			}
 			delete ob;
 		}
@@ -688,7 +742,7 @@ void World::doEdit(float time)
 
 		if(ih->KeyPressedThisFrame(OIS::KC_DELETE) && mSelectedType == ObjectSelect::DYNAMIC)
 	{
-		if (((int) mDynamicObjects.size() > 0) && mCurrentDynamicIndex >= 0 && mCurrentDynamicIndex < mDynamicObjects.size())
+		if (((int) mDynamicObjects.size() > 0) && mCurrentDynamicIndex >= 0 && mCurrentDynamicIndex < (int) mDynamicObjects.size())
 		{
 			GameObject *ob = mDynamicObjects[mCurrentDynamicIndex];
 			mDynamicObjects.erase(mDynamicObjects.begin() + mCurrentDynamicIndex);
@@ -699,7 +753,17 @@ void World::doEdit(float time)
 			}
 			if ((int) mDynamicObjects.size() > mCurrentDynamicIndex)
 			{
-				mDynamicObjects[mCurrentDynamicIndex]->setMaterial("simpleRed");
+				//mDynamicObjects[mCurrentDynamicIndex]->setMaterial("selectMaterial");
+				//mCurrentEditObject = mDynamicObjects[mCurrentDynamicIndex];
+				//				mPlayer->setPosition(mCurrentEditObject->getPosition());
+				//mPlayer->setOrientation(mCurrentEditObject->getOrientation());
+								mCurrentEditObject = NULL;
+
+
+			}
+			else 
+			{
+				mCurrentEditObject = NULL;
 			}
 			delete ob;
 		}
@@ -714,9 +778,14 @@ void World::doEdit(float time)
 			{
 				mCurrentGateIndex--;
 			}
+			if (mCurrentEditObject != NULL)
+			{
+				mCurrentEditObject->restoreOriginalMaterial();
+				mCurrentEditObject = NULL;
+			}
 			if (mGoals.size() > 0)
 			{
-				mGoals[mCurrentGateIndex]->setMaterial("simpleRed");
+				mGoals[mCurrentGateIndex]->setMaterial("selectMaterial");
 				mSelectedType = ObjectSelect::GATE;
 			}
 
@@ -729,8 +798,13 @@ void World::doEdit(float time)
 			}
 			if (mStaticObjects.size() > 4)
 			{
-				mStaticObjects[mCurrentStaticIndex]->setMaterial("simpleRed");
+				mStaticObjects[mCurrentStaticIndex]->setMaterial("selectMaterial");
 				mSelectedType = ObjectSelect::STATIC;
+
+
+				mCurrentEditObject = mStaticObjects[mCurrentStaticIndex];
+				mPlayer->setPosition(mCurrentEditObject->getPosition());
+				mPlayer->setOrientation(mCurrentEditObject->getOrientation());
 			}
 		} 
 		else  if(ih->IsKeyDown(OIS::KC_LCONTROL))
@@ -741,8 +815,13 @@ void World::doEdit(float time)
 			}
 			if (mDynamicObjects.size() > 0)
 			{
-				mDynamicObjects[mCurrentDynamicIndex]->setMaterial("simpleRed");
+				mDynamicObjects[mCurrentDynamicIndex]->setMaterial("selectMaterial");
+				mCurrentEditObject = mDynamicObjects[mCurrentDynamicIndex];
 				mSelectedType = ObjectSelect::DYNAMIC;
+
+				mPlayer->setPosition(mCurrentEditObject->getPosition());
+				mPlayer->setOrientation(mCurrentEditObject->getOrientation());
+
 			}
 		}
 	}
@@ -755,62 +834,106 @@ void World::doEdit(float time)
 			{
 				mCurrentGateIndex++;
 			}
+
+			if (mCurrentEditObject != NULL)
+			{
+				mCurrentEditObject->restoreOriginalMaterial();
+				mCurrentEditObject = NULL;
+			}
 			if (mGoals.size() > 0)
 			{
-				mGoals[mCurrentGateIndex]->setMaterial("simpleRed");
+				mGoals[mCurrentGateIndex]->setMaterial("selectMaterial");
 				mSelectedType = ObjectSelect::GATE;
 			}
 
 		} 
 		else if(ih->IsKeyDown(OIS::KC_LSHIFT))
 		{
-			if (mCurrentStaticIndex < mStaticObjects.size() - 1)
+			if (mCurrentStaticIndex < (int) mStaticObjects.size() - 1)
 			{
 				mCurrentStaticIndex++;
 			}
 			if (mStaticObjects.size() > 4)
 			{
-				mStaticObjects[mCurrentStaticIndex]->setMaterial("simpleRed");
+				mStaticObjects[mCurrentStaticIndex]->setMaterial("selectMaterial");
+				mCurrentEditObject = mStaticObjects[mCurrentStaticIndex];
+
+				mPlayer->setPosition(mCurrentEditObject->getPosition());
+				mPlayer->setOrientation(mCurrentEditObject->getOrientation());
+
 				mSelectedType = ObjectSelect::STATIC;
 			}
 		} 
 		else  if(ih->IsKeyDown(OIS::KC_LCONTROL))
 		{
-			if (mCurrentDynamicIndex < mDynamicObjects.size()  - 1)
+			if (mCurrentDynamicIndex < (int) mDynamicObjects.size()  - 1)
 			{
 				mCurrentDynamicIndex++;
 			}
 			if (mDynamicObjects.size() > 0)
 			{
-				mDynamicObjects[mCurrentDynamicIndex]->setMaterial("simpleRed");
+				mDynamicObjects[mCurrentDynamicIndex]->setMaterial("selectMaterial");
+				mCurrentEditObject = mDynamicObjects[mCurrentDynamicIndex];
 				mSelectedType = ObjectSelect::DYNAMIC;
+
+								mPlayer->setPosition(mCurrentEditObject->getPosition());
+				mPlayer->setOrientation(mCurrentEditObject->getOrientation());
+
 			}
 		}
 	}
 	
 	if (ih->KeyPressedThisFrame(OIS::KC_EQUALS) && !ih->IsKeyDown(OIS::KC_LSHIFT))
 	{
-		mPlacementScale += 1;
-		mHUD->setScore((int) mPlacementScale);
+		if (mCurrentEditObject != NULL)
+		{
+			mCurrentEditObject->setScale(mCurrentEditObject->getScale() + Ogre::Vector3::UNIT_SCALE);
+		}
+		else
+		{
+			mPlacementScale += 1;
+			mHUD->setScore((int) mPlacementScale);
+		}
 	}
 		if (ih->KeyPressedThisFrame(OIS::KC_EQUALS) && ih->IsKeyDown(OIS::KC_LSHIFT))
 	{
-		mPlacementScale += 10;
-		mHUD->setScore((int) mPlacementScale);
+		if (mCurrentEditObject != NULL)
+		{
+			mCurrentEditObject->setScale(mCurrentEditObject->getScale() + Ogre::Vector3::UNIT_SCALE * 10);
+		}
+		else
+		{
+			mPlacementScale += 10;
+			mHUD->setScore((int) mPlacementScale);
+		}
 	}
 	if (ih->KeyPressedThisFrame(OIS::KC_MINUS) && !ih->IsKeyDown(OIS::KC_LSHIFT))
 	{
-		mPlacementScale -= 1;
-		mHUD->setScore((int) mPlacementScale);
+		if (mCurrentEditObject != NULL)
+		{
+			mCurrentEditObject->setScale(mCurrentEditObject->getScale() - Ogre::Vector3::UNIT_SCALE * 1);
+		}
+		else
+		{
+			mPlacementScale -= 1;
+			mHUD->setScore((int) mPlacementScale);
+		}
 	}
 		if (ih->KeyPressedThisFrame(OIS::KC_MINUS) && ih->IsKeyDown(OIS::KC_LSHIFT))
 	{
-		mPlacementScale -= 10;
-		mHUD->setScore((int) mPlacementScale);
+		if (mCurrentEditObject != NULL)
+		{
+			mCurrentEditObject->setScale(mCurrentEditObject->getScale() - Ogre::Vector3::UNIT_SCALE * 10);
+		}
+		else
+		{
+			mPlacementScale -= 10;
+			mHUD->setScore((int) mPlacementScale);
+		}
 	}
 
 
-	if (ih->KeyPressedThisFrame(OIS::KC_2) && !ih->IsKeyDown(OIS::KC_LSHIFT))
+	if (ih->KeyPressedThisFrame(OIS::KC_3))
 
 	{
 		mHUD->setDebug(mPlayer->getPosition(), "Wall Placed");
@@ -818,10 +941,34 @@ void World::doEdit(float time)
 		GameObject *wall = (new GameObject(GameObject::GATE, "Iceberg1.mesh",  mSceneManager,mPlayer->getPosition(), mPlayer->getOrientation()));
 		wall->setScale(mPlacementScale);
 		mStaticObjects.push_back(wall);
+		if (mCurrentEditObject)
+		{
+			mCurrentEditObject->restoreOriginalMaterial();
+		}
 		mCurrentEditObject = wall;
+		mCurrentEditObject->setMaterial("selectMaterial");
+		mCurrentStaticIndex = mStaticObjects.size() - 1;
+		mSelectedType = ObjectSelect::STATIC;
+	}
+		if (ih->KeyPressedThisFrame(OIS::KC_4))
+
+	{
+		mHUD->setDebug(mPlayer->getPosition(), "Wall Placed");
+
+		GameObject *wall = (new GameObject(GameObject::GATE, "Iceberg2.mesh",  mSceneManager,mPlayer->getPosition(), mPlayer->getOrientation()));
+		wall->setScale(mPlacementScale);
+		mStaticObjects.push_back(wall);
+		if (mCurrentEditObject)
+		{
+			mCurrentEditObject->restoreOriginalMaterial();
+		}
+		mCurrentEditObject = wall;
+		mCurrentEditObject->setMaterial("selectMaterial");
+				mCurrentStaticIndex = mStaticObjects.size() - 1;
+		mSelectedType = ObjectSelect::STATIC;
 	}
 
-	if (ih->KeyPressedThisFrame(OIS::KC_3) && !ih->IsKeyDown(OIS::KC_LSHIFT))
+	if (ih->KeyPressedThisFrame(OIS::KC_2))
 
 	{
 		mHUD->setDebug(mPlayer->getPosition(), "Target Placed");
@@ -831,17 +978,20 @@ void World::doEdit(float time)
 		GameObject *target = (new GameObject(GameObject::GATE, "Target.mesh",  mSceneManager,pos, mPlayer->getOrientation()));
 		target->setScale(20);
 
-		mDynamicObjects.push_back(target);
-	}
-	if (ih->KeyPressedThisFrame(OIS::KC_2) && ih->IsKeyDown(OIS::KC_LSHIFT))
-	{
-		if (mDynamicObjects.size() > 0)
+
+		if (mCurrentEditObject)
 		{
-			GameObject *ob = mDynamicObjects[mDynamicObjects.size() - 1];
-			mDynamicObjects.pop_back();
-			delete ob;
+			mCurrentEditObject->restoreOriginalMaterial();
 		}
+
+		mCurrentEditObject = target;
+
+		mCurrentEditObject->setMaterial("selectMaterial");
+		mSelectedType = ObjectSelect::DYNAMIC;
+		mDynamicObjects.push_back(target);
+		mCurrentDynamicIndex = mDynamicObjects.size() - 1;
 	}
+
 	for (std::vector<GameObject *>::iterator it = mDynamicObjects.begin(); it != mDynamicObjects.end(); it++)
 	{
 
@@ -850,6 +1000,16 @@ void World::doEdit(float time)
 
 }
 
+
+void World::finishRace()
+{
+	// HACK!  Change!!
+
+	MenuManager::getInstance()->getMenu("gameOver")->enable();
+	mBase->endGame();
+	mGameRunning = false;
+
+}
 
 void World::Think(float time)
 {
@@ -903,17 +1063,17 @@ void World::Think(float time)
 
 	InputHandler *ih = InputHandler::getInstance();
 
-	if (ih->IsKeyDown(OIS::KC_O))
-	{
-		mDisp -= time ;
-		mHUD->setDebug(mDisp, "Displacement");
+	//if (ih->IsKeyDown(OIS::KC_O))
+	//{
+	//	mDisp -= time ;
+	//	mHUD->setDebug(mDisp, "Displacement");
 
-	}
-	if (ih->IsKeyDown(OIS::KC_L))
-	{
-		mDisp += time ;
-		mHUD->setDebug(mDisp, "Displacement");
-	}
+	//}
+	//if (ih->IsKeyDown(OIS::KC_L))
+	//{
+	//	mDisp += time ;
+	//	mHUD->setDebug(mDisp, "Displacement");
+	//}
 
 
 	// Push the water down to cause a wake, but only if the boat is moving ...
@@ -940,23 +1100,47 @@ void World::Think(float time)
 
 	mWaterMesh->updateMesh(time);
 
-	if (mPlayer->collides(mGoals[0]))
+	if (mGameType == GameType::RACE && mPlayer->collides(mGoals[0]))
 	{
 		mCurrentIndex++;
+		SoundBank::getInstance()->play("clearGate");
+
+
 		if (mCurrentIndex >= (int) mGoalPositions.size())
 		{
 			mCurrentIndex = 0;
+			mCurrentLap++;
+			if(mCurrentLap > mNumLaps)
+			{
+				finishRace();
+				return;
+			}
+			else
+			{
+				mHUD->setLap(mCurrentLap, mNumLaps);
+			}
 		}
+		mHUD->setGate(mCurrentIndex+1,mGoalPositions.size());
 
 		for (unsigned int i = 1; i < mNumGoalsToShow; i++)
 		{
 			mGoals[i-1]->setPosition(mGoals[i]->getPosition());
 			mGoals[i-1]->setOrientation(mGoals[i]->getOrientation());
+			mGoals[i-1]->setScale(mGoals[i]->getScale().x);
 		}
 		mGoals[mNumGoalsToShow - 1]->setPosition( mGoalPositions[(mCurrentIndex+mNumGoalsToShow - 1) % mGoalPositions.size()]);
-				mGoals[mNumGoalsToShow - 1]->setOrientation( mGoalOrientations[(mCurrentIndex+mNumGoalsToShow - 1) % mGoalPositions.size()]);
+		mGoals[mNumGoalsToShow - 1]->setOrientation( mGoalOrientations[(mCurrentIndex+mNumGoalsToShow - 1) % mGoalPositions.size()]);
+		mGoals[mNumGoalsToShow - 1]->setScale( mGoalScales[(mCurrentIndex+mNumGoalsToShow - 1) % mGoalPositions.size()]);
 
 	}
+
+
+	if (mGameType == GameType::TARGET && mAIManager->numEnemies() == 0)
+	{
+		finishRace();
+		return;
+	}
+
 
 	Ogre::Vector3 laserStart;
 	Ogre::Vector3 laserDirection;
@@ -967,16 +1151,25 @@ void World::Think(float time)
 		mAIManager->rayCollision(laserStart,laserDirection, dist, time * mPlayer->getLaserDPS());
 	} 
 
-	for (unsigned int i = 0; i < mNumGoalsToShow; i++)
+	for (unsigned int i = 0; i < mNumGoalsToShow && i < mGoals.size(); i++)
 	{
 		mGoals[i]->roll(Ogre::Degree(time * 30));
 	}
 
-	PointArrowAt(mGoals[0]->getPosition());
+	if (mGameType == GameType::RACE)
+	{
+		PointArrowAt(mGoals[0]->getPosition());
 
-
-
-
+	}
+	else if (mGameType == GameType::TARGET)
+	{
+		mHUD->setTarget(mAIManager->numEnemies(), mInitialTargets);
+		const Enemy *closest = mAIManager->getClosestEnemy(mPlayer->getPosition());
+		if (closest != NULL)
+		{
+			PointArrowAt(closest->getPosition());
+		}
+	}
 
 
 }
@@ -998,8 +1191,8 @@ void World::PointArrowAt(Ogre::Vector3 pos)
 
 
 
-	mArrowNode->pitch(Ogre::Degree(90));
-	mArrowNode->yaw(Ogre::Degree(90));
+	//mArrowNode->pitch(Ogre::Degree(90));
+	//mArrowNode->yaw(Ogre::Degree(90));
 
 
 }

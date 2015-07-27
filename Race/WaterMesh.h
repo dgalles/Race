@@ -9,8 +9,9 @@ Also see acknowledgements in Readme.html
 
 You may use this sample code for anything you like, it is not covered by the
 same license as the rest of the engine.
------------------------------------------------------------------------------
-*/
+--
+---------------------------------------------------------------------------
+s*/
 
 
 #ifndef _WATER_MESH_H_

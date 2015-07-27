@@ -41,10 +41,10 @@
 
 #include <SDL_mixer.h>
 #include <string>
-#include <unordered_map>
+#include <map>
 #include <string>
 #include <stdexcept>
-
+#include <vector>
 
 
 
@@ -57,7 +57,8 @@ public:
 	void fadeIn(int ms, bool repeat);
 	void fadeOut(int ms);
 	void play();
-protected:
+	void stop();
+
 	Mix_Chunk* mChunk;
 	int mCurrentChanel;
 };
@@ -83,8 +84,13 @@ public:
 	void setVolume(int newVol);
 	int getCurrentIndex() { return mSoundIndex; }
 	void setCurrentIndex(int newIndex) {if (newIndex < mNumSounds) mSoundIndex = newIndex; }
+	void stopAllSounds();
+	void stop(std::string id);
 
-
+	int fadeInManual(std::string play, int ms, bool repeat);
+	void fadeOutManual(int channel, int ms);
+	void stopManual(int channel);
+	
 
 private:
 	std::vector<std::map<std::string, SoundChunk*>> mChunks;

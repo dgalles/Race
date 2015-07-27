@@ -1,0 +1,166 @@
+<Map> 
+<Enemies> 
+</Enemies> 
+<Gates> 
+  <Gate>
+     <Position X="3859" Y="0" Z="3248" />
+	 <Scale>400</Scale>
+  </Gate>
+  <Gate>
+     <Position X="5464" Y="0" Z="3192" />
+	 <Scale>400</Scale>
+  </Gate>
+  <Gate>
+     <Position X="5726" Y="0" Z="3623" />
+	 <Scale>400</Scale>
+  </Gate>
+  <Gate>
+     <Position X="5376" Y="0" Z="4082" />
+	 <Scale>400</Scale>
+  </Gate>
+  <Gate>
+     <Position X="3887" Y="0" Z="4044" />
+	 <Scale>400</Scale>
+  </Gate>
+  <Gate>
+     <Position X="2546" Y="0" Z="4129" />
+	 <Scale>400</Scale>
+  </Gate>
+  <Gate>
+     <Position X="2060" Y="0" Z="3827" />
+	 <Scale>400</Scale>
+  </Gate>
+  <Gate>
+     <Position X="2162" Y="0" Z="3313" />
+	 <Scale>400</Scale>
+  </Gate>
+</Gates> 
+<Walls> 
+  <Wall>
+     <Position X="2548" Y="0" Z="2789" />
+     <Scale>101</Scale>
+     <Rotation>93.6415</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="3264" Y="0" Z="2745" />
+     <Scale>101</Scale>
+     <Rotation>93.6415</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="3975" Y="0" Z="2701" />
+     <Scale>101</Scale>
+     <Rotation>93.6415</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="4668" Y="0" Z="2652" />
+     <Scale>101</Scale>
+     <Rotation>93.6415</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="5363" Y="0" Z="2610" />
+     <Scale>101</Scale>
+     <Rotation>93.6415</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="5889" Y="0" Z="2998" />
+     <Scale>101</Scale>
+     <Rotation>36.1224</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="6072" Y="0" Z="3654" />
+     <Scale>101</Scale>
+     <Rotation>5.85501</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="5816" Y="0" Z="4348" />
+     <Scale>101</Scale>
+     <Rotation>-33.0189</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="5816" Y="0" Z="4348" />
+     <Scale>101</Scale>
+     <Rotation>-33.0189</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="5167" Y="0" Z="4581" />
+     <Scale>101</Scale>
+     <Rotation>-89.3114</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="4474" Y="0" Z="4591" />
+     <Scale>101</Scale>
+     <Rotation>-89.3114</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="3822" Y="0" Z="4600" />
+     <Scale>101</Scale>
+     <Rotation>-89.3114</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="3161" Y="0" Z="4609" />
+     <Scale>101</Scale>
+     <Rotation>-89.3114</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="2463" Y="0" Z="4619" />
+     <Scale>101</Scale>
+     <Rotation>-89.3114</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="1842" Y="0" Z="4354" />
+     <Scale>101</Scale>
+     <Rotation>-129.377</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="1649" Y="0" Z="3735" />
+     <Scale>101</Scale>
+     <Rotation>176.359</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="1924" Y="0" Z="3054" />
+     <Scale>101</Scale>
+     <Rotation>144.894</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="2862" Y="0" Z="3743" />
+     <Scale>101</Scale>
+     <Rotation>91.0871</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="3537" Y="0" Z="3732" />
+     <Scale>101</Scale>
+     <Rotation>91.0871</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="4384" Y="0" Z="3719" />
+     <Scale>101</Scale>
+     <Rotation>91.0871</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="5104" Y="0" Z="3690" />
+     <Scale>101</Scale>
+     <Rotation>92.4484</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+</Walls> 
+</Map> 

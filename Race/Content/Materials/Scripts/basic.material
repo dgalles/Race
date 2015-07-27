@@ -16,6 +16,25 @@ material simpleRed
    }
 }
 
+
+material selectMaterial
+{
+   technique
+   {
+     pass
+     {
+       scene_blend alpha_blend
+ 
+       texture_unit
+       {
+         colour_op_ex source1 src_manual src_current 1 0 0
+         alpha_op_ex source1 src_manual src_current 1
+       }
+     }
+   }
+}
+
+
 material LaserMaterial
 {
     transparency_casts_shadows on

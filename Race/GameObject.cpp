@@ -105,6 +105,7 @@ Ogre::Vector3
 void 
 	GameObject::loadModel(Ogre::String modelName, Ogre::SceneManager *sm)
 {
+	mModelName = modelName;
     mSceneManager = sm;
     mEntity =sm->createEntity(modelName);
 	mSceneNode =sm->getRootSceneNode()->createChildSceneNode();

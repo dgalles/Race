@@ -39,8 +39,8 @@ Kinect::Kinect(void)
 
 	mCallibrated = true;
 
-	mLeftWristPos = Ogre::Vector3(0,mYLeftMinDif,0);
-	mRightWristPos = Ogre::Vector3(0,mYRightMinDif,0);
+	mLeftHandPos = Ogre::Vector3(0,mYLeftMinDif,0);
+	mRightHandPos = Ogre::Vector3(0,mYRightMinDif,0);
 	mCenterPos = Ogre::Vector3::ZERO;
 }
 
@@ -125,17 +125,17 @@ Ogre::Vector3 Kinect::handPositionAdjusted(bool &usingLeft)
 	float yPercent;
 	if (mCallibrated)
 	{
-		if ( mLeftWristPos.y > mRightWristPos.y)
+		if ( mLeftHandPos.y > mRightHandPos.y)
 		{
 			usingLeft = true;
-			xPercent =  (mLeftWristPos.x - mCenterPos.x - mXLeftMinDif) / (mXLeftMaxDif - mXLeftMinDif);
-			yPercent =  (mLeftWristPos.y - mCenterPos.y - mYLeftMinDif) / (mYLeftMaxDif - mYLeftMinDif);
+			xPercent =  (mLeftHandPos.x - mCenterPos.x - mXLeftMinDif) / (mXLeftMaxDif - mXLeftMinDif);
+			yPercent =  (mLeftHandPos.y - mCenterPos.y - mYLeftMinDif) / (mYLeftMaxDif - mYLeftMinDif);
 		}
 		else
 		{
 			usingLeft = false;
-			xPercent =  (mRightWristPos.x - mCenterPos.x - mXRightMinDif) / (mXRightMaxDif - mXRightMinDif);
-			yPercent =  (mRightWristPos.y - mCenterPos.y - mYRightMinDif) / (mYRightMaxDif - mYRightMinDif);
+			xPercent =  (mRightHandPos.x - mCenterPos.x - mXRightMinDif) / (mXRightMaxDif - mXRightMinDif);
+			yPercent =  (mRightHandPos.y - mCenterPos.y - mYRightMinDif) / (mYRightMaxDif - mYRightMinDif);
 
 		}
 		xPercent = Ogre::Math::Clamp<float>(xPercent,0,1);
@@ -347,8 +347,8 @@ Kinect::updateKinectSkeleton()
 			Ogre::Radian frontBackAngle1 = Ogre::Math::ATan2(ZDisplacement, headPos.y - shoulderPos.y + 0.5f);
 			mFrontBackAngle = frontBackAngle1 * 4;
 
-			mLeftWristPos = Ogre::Vector3(leftWrist.x, leftWrist.y, leftWrist.z);
-			mRightWristPos = Ogre::Vector3(rightWrist.x, rightWrist.y, rightWrist.z);
+			mLeftHandPos = Ogre::Vector3(leftHand.x, leftHand.y, leftHand.z);
+			mRightHandPos = Ogre::Vector3(rightHand.x, rightHand.y, rightHand.z);
 			mCenterPos = Ogre::Vector3(shoulderPos.x, shoulderPos.y, shoulderPos.z);
 
 		}

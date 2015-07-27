@@ -1,4 +1,11 @@
 <Map> 
+
+<Config>
+	<Mode>Racing</Mode>
+	<RestrictGunElevation>true</RestrictGunElevation>
+	<AllowGun>false</AllowGun>
+</Config>
+
 <Enemies> 
 </Enemies> 
 <Gates> 

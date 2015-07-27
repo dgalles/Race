@@ -26,6 +26,9 @@
 #include "Ghost.h"
 #include "JsonUtils.h"
 
+#include "tinyxml.h"
+#include "FileUtil.h"
+
 #include <iostream>
 #include <fstream>
 
@@ -135,11 +138,11 @@ Race::createScene()
 
 }
 void
-	Race::startGame(char *levelName, bool doEdit)
+	Race::startGame(bool doEdit)
 {
 	mLogger->StartSession( "\"subgame\":\"normal\"");
 	mKinect->StartSession();
-	mWorld->StartGame(levelName, doEdit);
+	mWorld->StartGame(mCurrentLevel.c_str(), doEdit);
 	mFrameListener->setPaused(false);
 }
 
@@ -162,6 +165,7 @@ void Race::endGame()
 	mKinect->EndSession();
 	mFrameListener->setPaused(true);
 	mWorld->destroyWorld();
+	SoundBank::getInstance()->stopAllSounds();
 }
 
 
@@ -269,6 +273,40 @@ void Race::createStores(Menu *parent, std::vector<Store *> &stores)
 
 }
 
+ std::function<void(void)> Race::createFunction(std::string str)
+ {
+	 return [this,str]() { this->mCurrentLevel = str; };
+ }
+
+
+bool ReadMapList(std::map<std::string, std::string> &maps, const char *directoryFile)
+{
+	TiXmlDocument doc(FileUtil::getFullPath(directoryFile).c_str());
+	if(!doc.LoadFile(TIXML_ENCODING_UTF8)) {
+		return false;
+	}
+	TiXmlHandle hDoc(&doc);
+	TiXmlElement *map;
+	TiXmlHandle hRoot(0);
+
+	// <Map>
+	map = hDoc.FirstChildElement().Element();
+	if (!map)
+		return false;
+	hRoot = TiXmlHandle(map);
+
+	for (TiXmlElement *mapXML =  hRoot.FirstChildElement("Map").Element(); mapXML; mapXML = mapXML->NextSiblingElement()) 
+	{
+		const char* fileName = mapXML->GetText();
+		const char* prettyName = mapXML->Attribute("Name");
+		if (prettyName == NULL)
+		{
+			prettyName = fileName;
+		}
+		maps[prettyName] = fileName;
+	}
+	return true;
+}
 
 
 
@@ -297,6 +335,7 @@ Race::setupMenus(bool loginRequired)
     Menu *confirmMenu = new Menu("Confirm Profile Reset", "profleReset", 0.1f, 0.1f, 0.1f, advancedOptions);
 	Menu *endGameMenu = new Menu("Game Over!", "gameOver", 0.1f, 0.1f, 0.1f, NULL);
 
+	Menu *startGameMenu = new Menu("Choose Race", "startgame", 0.05f, 0.1f, 0.07f, mainMenu);
 
 //	std::vector<Store *> stores;
 //	createStores(mainMenu, stores);
@@ -318,7 +357,7 @@ Race::setupMenus(bool loginRequired)
 	menus->addMenu(login);
 	menus->addMenu(endGameMenu);
 	menus->addMenu(confirmMenu);
-
+	menus->addMenu(startGameMenu);
 
 	/////////////////////////////////////////////////
 	// Login Menu 
@@ -338,17 +377,54 @@ Race::setupMenus(bool loginRequired)
 	options->AddSelectElement("Return to Main Menu", [options, mainMenu]() {options->disable(); mainMenu->enable();});
 
 
-	
+	//////////////////////////////////////////////////////
+	///  Start Game Menu
+	////////////////////////////////////////////////////////
+
+
+	startGameMenu->AddSelectElement("Start", [this, startGameMenu]() {startGameMenu->disable(), this->startGame();});
+
+
+	std::map<std::string, std::string> levels;
+	ReadMapList(levels, "MapList.maps");
+
+	std::vector<Ogre::String> levelNames;
+	std::vector<std::function<void()>> levelCallbacks;
+
+
+
+	for (std::map<std::string, std::string>::iterator it = levels.begin();
+		 it != levels.end();
+		 it++)
+	{
+		levelNames.push_back((*it).first);
+		std::string level = (*it).second;
+		levelCallbacks.push_back(createFunction(level));
+	}
+
+	if (levels.size() > 0)
+	{
+		mCurrentLevel = levels[levelNames[0]];
+	}
+	startGameMenu->AddChooseEnum("Map",levelNames,levelCallbacks,0, false);	
+	startGameMenu->AddChooseInt("Number of Laps", [w](int x) {w->setNumLaps(x); }, 1, 20,w->getNumLaps(), 1, true);
+
+
+
+
+
 	/////////////////////////////////////////////////
 	// Options Submenu:  Gameplay 
 	//////////////////////////////////////////////////
 
    
-    gameplayOptions->AddChooseFloat("Player Speed", [p](float x) {p->setMaxSpeed(x); }, 50.0f, 1000.0f, p->getMaxSpeed(), 0.5f, true);
+    gameplayOptions->AddChooseFloat("Player Speed", [p](float x) {p->setMaxSpeed(x); }, 50.0f, 1000.0f, p->getMaxSpeed(), 10, true);
     gameplayOptions->AddChooseFloat("Player Turning Angle (Degrees / sec)", [p](float x) {p->setDegreesPerSecond(x); }, 10, 180, p->getDegressPerSecond(), 0.5f, true);
     gameplayOptions->AddChooseFloat("Player Acceleration", [p](float x) {p->setAcceleration(x); }, 10, 180, p->getAcceleration(), 5, true);
 
     gameplayOptions->AddChooseBool("Stop When Firing", [p ](bool x) { p->setStopOnFiring(x);},p->getStopOnFiring(), true);
+    gameplayOptions->AddChooseBool("NoTurning When Firing", [p ](bool x) { p->setNoTurnOnFiring(x);},p->getNoTurnOnFiring(), true);
+
     gameplayOptions->AddChooseFloat("Player Laser DPS", [p](float x) {p->setLaserDPS(x); }, 0.5f, 10.0f, p->getLaserDPS(), 0.5f, true);
     gameplayOptions->AddChooseFloat("Laser Duration", [p](float x) {p->setLaserDuration(x); },1.0f, 1000.0f, p->getLaserDuration(), 1.0f, true);
     gameplayOptions->AddChooseFloat("Laser Cooldown", [p](float x) {p->setLaserCooldown(x); },0.0f, 30, p->getLaserCooldown(), 1.0f, true);
@@ -379,12 +455,12 @@ Race::setupMenus(bool loginRequired)
 	//////////////////////////////////////////////////
 
 
-	mainMenu->AddSelectElement("Start Standard Game", [mainMenu,this]() { mainMenu->disable(); this->startGame("Level1"); });
+	mainMenu->AddSelectElement("Select Race To Run", [startGameMenu, mainMenu]() { mainMenu->disable();startGameMenu->enable(); });
 
-	mainMenu->AddSelectElement("Start Edit", [mainMenu,this]() { mainMenu->disable(); this->startGame("Level1", true); });
+//	mainMenu->AddSelectElement("Start Edit", [mainMenu,this]() { mainMenu->disable(); this->startGame(true); });
 
 	mainMenu->AddSelectElement("Login", [mainMenu, login]() {mainMenu->disable(); login->enable();});
-	mainMenu->AddSelectElement("Show Goals", [mainMenu, a]() {a-> ShowAllAchievements(true); mainMenu->disable();});
+//	mainMenu->AddSelectElement("Show Goals", [mainMenu, a]() {a-> ShowAllAchievements(true); mainMenu->disable();});
 	mainMenu->AddSelectElement("Options", [options, mainMenu]() {options->enable(); mainMenu->disable();});
 //	mainMenu->AddSelectElement("Store", [store, mainMenu]() {store->enable(); mainMenu->disable();});
 	mainMenu->AddSelectElement("Quit", [l, this]() {this->writeConfigStr(); l->quit();});
@@ -404,7 +480,12 @@ Race::setupMenus(bool loginRequired)
     pauseMenu->AddSelectElement("Quit (Close Program)", [this, l]() {this->writeConfigStr();l->quit();});
 
 
+	/////////////////////////////////////////////////
+	// End Game Menu 
+	//////////////////////////////////////////////////
 
+	
+    endGameMenu->AddSelectElement("Return to Main Menu", [endGameMenu,mainMenu]() { endGameMenu->disable();mainMenu->enable(); });
 
 
 	/////////////////////////////////////////////////
@@ -414,9 +495,9 @@ Race::setupMenus(bool loginRequired)
 
     advancedOptions->AddSelectElement("Get Profile from Server", [this]() {this->readConfigStr();});
     advancedOptions->AddSelectElement("Reset Profile", [advancedOptions, confirmMenu]() {advancedOptions->disable();confirmMenu->enable();});
+	advancedOptions->AddChooseFloat("Network Update Freq", [](float x) {Logger::getInstance()->setTimeStep(x); }, 0.1f, 1.f, Logger::getInstance()->getTimeStep(), 0.1f, true);
 	advancedOptions->AddSelectElement("Return to Options Menu", [advancedOptions, options]() {advancedOptions->disable(); options->enable();});
 
-	advancedOptions->AddChooseFloat("Network Update Freq", [](float x) {Logger::getInstance()->setTimeStep(x); }, 0.1f, 1.f, Logger::getInstance()->getTimeStep(), 0.1f, true);
 
     confirmMenu->AddSelectElement("Reset Profile (Cannot be undone!)", [this, advancedOptions, confirmMenu, menus]() {
 																											   menus->resetMenus();

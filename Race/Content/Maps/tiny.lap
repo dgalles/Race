@@ -1,0 +1,17 @@
+<Map> 
+<Enemies> 
+</Enemies> 
+<Gates> 
+  <Gate>
+     <Position X="4000" Y="0" Z="4000" />
+  </Gate>
+  <Gate>
+     <Position X="4000" Y="0" Z="4050" />
+  </Gate>
+  <Gate>
+     <Position X="4000" Y="0" Z="4100" />
+  </Gate>
+</Gates> 
+<Walls> 
+</Walls> 
+</Map> 

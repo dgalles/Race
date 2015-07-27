@@ -20,6 +20,8 @@ public:
     GameObject(ObjectType type);
 	GameObject::GameObject(ObjectType typ, Ogre::String modelName,  Ogre::SceneManager *sm,Ogre::Vector3 position, Ogre::Quaternion orientation);
 
+	Ogre::String getModelName() { return mModelName; }
+
     virtual ~GameObject(void);
 
 	ObjectType type() {return mType;}
@@ -75,5 +77,6 @@ protected:
 	Ogre::Vector3 mFacing;
 	Ogre::Entity *mEntity;
 	Ogre::String mMaterialName;
+	Ogre::String mModelName;
 };
 

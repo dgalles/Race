@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Map>
+	<Config>
+        <Mode>Target</Mode>
+		<AllowGun>true</AllowGun>
+		<RestrictGunElevation>true</RestrictGunElevation>
+    </Config>
+	
+<Enemies> 
+  <Target>
+    <Type>Target</Type> 
+    <Scale>20</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="4716" Y="15" Z="3139" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>20</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="3937" Y="15" Z="3130" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>20</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="4170" Y="15" Z="3027" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>20</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="4910" Y="15" Z="2975" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>20</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="3272" Y="15" Z="5977" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>20</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="3007" Y="15" Z="6227" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>20</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="2514" Y="15" Z="5519" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>20</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="2430" Y="15" Z="5778" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>20</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="3470" Y="15" Z="5713" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>20</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="6586" Y="15" Z="6375" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>20</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="6164" Y="15" Z="6399" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>20</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="6414" Y="15" Z="5895" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>20</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="6744" Y="15" Z="6686" />
+  </Target>
+  <Target>
+    <Type>Target</Type> 
+    <Scale>20</Scale>
+    <Model>Target.mesh</Model>
+     <Position X="6792" Y="15" Z="6074" />
+  </Target>
+</Enemies> 
+	
+	<Walls>
+
+
+		</Walls>		
+</Map>

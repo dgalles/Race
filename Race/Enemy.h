@@ -31,11 +31,14 @@ public:
 	virtual bool isDead() { return mDead; }
 	virtual float getHealth() { return mHealth; }
 
+	virtual ~Target();
 
 protected:
 
 	bool mHitThisFrame;
 	bool mHitLastFrame;
 	bool mDead;
+	bool mPlayingHitSound;
+	int mPlayingHandle;
 
 };

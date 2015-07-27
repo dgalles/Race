@@ -1,0 +1,227 @@
+<Map> 
+
+<Config>
+	<RestrictGunElevation>true</RestrictGunElevation>
+	<AllowGun>false</AllowGun>
+</Config>
+
+<Enemies> 
+</Enemies> 
+<Gates> 
+  <Gate>
+     <Position X="4190" Y="0" Z="2078" />
+  </Gate>
+  <Gate>
+     <Position X="4649" Y="0" Z="3278" />
+  </Gate>
+  <Gate>
+     <Position X="5802" Y="0" Z="4017" />
+  </Gate>
+  <Gate>
+     <Position X="6394" Y="0" Z="5133" />
+  </Gate>
+  <Gate>
+     <Position X="5871" Y="0" Z="6554" />
+  </Gate>
+  <Gate>
+     <Position X="4833" Y="0" Z="7078" />
+  </Gate>
+  <Gate>
+     <Position X="3779" Y="0" Z="6936" />
+  </Gate>
+  <Gate>
+     <Position X="3399" Y="0" Z="6093" />
+  </Gate>
+  <Gate>
+     <Position X="3654" Y="0" Z="5214" />
+  </Gate>
+  <Gate>
+     <Position X="3713" Y="0" Z="3968" />
+  </Gate>
+  <Gate>
+     <Position X="3132" Y="0" Z="3153" />
+  </Gate>
+  <Gate>
+     <Position X="2617" Y="0" Z="2678" />
+  </Gate>
+  <Gate>
+     <Position X="2024" Y="0" Z="2486" />
+  </Gate>
+  <Gate>
+     <Position X="1231" Y="0" Z="2691" />
+  </Gate>
+  <Gate>
+     <Position X="1335" Y="0" Z="3620" />
+  </Gate>
+  <Gate>
+     <Position X="1637" Y="0" Z="4614" />
+  </Gate>
+  <Gate>
+     <Position X="2058" Y="0" Z="5467" />
+  </Gate>
+  <Gate>
+     <Position X="2749" Y="0" Z="5726" />
+  </Gate>
+  <Gate>
+     <Position X="3427" Y="0" Z="5437" />
+  </Gate>
+  <Gate>
+     <Position X="3655" Y="0" Z="4507" />
+  </Gate>
+  <Gate>
+     <Position X="3190" Y="0" Z="2925" />
+  </Gate>
+  <Gate>
+     <Position X="2743" Y="0" Z="2114" />
+  </Gate>
+  <Gate>
+     <Position X="2345" Y="0" Z="1663" />
+  </Gate>
+  <Gate>
+     <Position X="2071" Y="0" Z="944" />
+  </Gate>
+  <Gate>
+     <Position X="2311" Y="0" Z="198" />
+  </Gate>
+  <Gate>
+     <Position X="3131" Y="0" Z="173" />
+  </Gate>
+  <Gate>
+     <Position X="3938" Y="0" Z="1244" />
+  </Gate>
+</Gates> 
+<Walls> 
+  <Wall>
+     <Position X="4722" Y="0" Z="2051" />
+     <Scale>61</Scale>
+     <Rotation>21.6919</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="5069" Y="0" Z="2907" />
+     <Scale>61</Scale>
+     <Rotation>9.36098</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="5984" Y="0" Z="3358" />
+     <Scale>61</Scale>
+     <Rotation>57.1688</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="6924" Y="0" Z="4440" />
+     <Scale>61</Scale>
+     <Rotation>17.555</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="6973" Y="0" Z="5924" />
+     <Scale>61</Scale>
+     <Rotation>-19.0862</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="6302" Y="0" Z="7202" />
+     <Scale>61</Scale>
+     <Rotation>-48.9811</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="5639" Y="0" Z="5178" />
+     <Scale>61</Scale>
+     <Rotation>12.4249</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="5048" Y="0" Z="4354" />
+     <Scale>61</Scale>
+     <Rotation>-42.3212</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="4779" Y="0" Z="6133" />
+     <Scale>61</Scale>
+     <Rotation>37.8206</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="2687" Y="0" Z="6908" />
+     <Scale>61</Scale>
+     <Rotation>37.8206</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="3022" Y="0" Z="4391" />
+     <Scale>61</Scale>
+     <Rotation>24.583</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="2148" Y="0" Z="4194" />
+     <Scale>61</Scale>
+     <Rotation>-28.7264</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="1665" Y="0" Z="5672" />
+     <Scale>61</Scale>
+     <Rotation>26.3864</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="3205" Y="0" Z="1653" />
+     <Scale>61</Scale>
+     <Rotation>16.1213</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="4081" Y="0" Z="680" />
+     <Scale>61</Scale>
+     <Rotation>-56.3055</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="643" Y="0" Z="4300" />
+     <Scale>51</Scale>
+     <Rotation>13.2306</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="1573" Y="0" Z="6460" />
+     <Scale>51</Scale>
+     <Rotation>90.5591</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="4485" Y="0" Z="5075" />
+     <Scale>51</Scale>
+     <Rotation>60.6712</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="3926" Y="0" Z="2918" />
+     <Scale>51</Scale>
+     <Rotation>24.3949</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="2214" Y="0" Z="2186" />
+     <Scale>51</Scale>
+     <Rotation>35.8291</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="2404" Y="0" Z="3223" />
+     <Scale>51</Scale>
+     <Rotation>-17.915</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+  <Wall>
+     <Position X="1124" Y="0" Z="4720" />
+     <Scale>51</Scale>
+     <Rotation>-83.7465</Rotation>
+     <Model>Iceberg1.mesh</Model> 
+  </Wall>
+</Walls> 
+</Map> 
