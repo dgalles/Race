@@ -16,6 +16,8 @@ public:
 	Player(World *world, Kinect *k, Achievements *ach);
 
 
+	void startGame();
+
 	void SetLaserLength(float length);
 	bool getEnableKinect() { return mEnableKinect; }
 	void setEnableKinect(bool enable) { mEnableKinect = enable;}
@@ -74,6 +76,7 @@ public:
 	float getAcceleration() { return mAccel; }
 	void setAcceleration(float accel) { mAccel = accel; }
 
+
 protected:
 	void SendData(float time);
 	void updateAnglesFromControls(Ogre::Degree &angle, Ogre::Degree &angle2, float &xPercent, float &yPercent, float time);
@@ -109,6 +112,8 @@ protected:
 	bool mStopOnFiring;
 	bool mNoTurnFire;
 
+
+
 	float mLaserDPS;
 	float mCurrentYPercent;
 	float mCurrentXPercent;
@@ -119,5 +124,7 @@ protected:
 	bool mLaserNeedsRecharging;
 	float mDesiredlaserLength;
 	float mTurretScaleY;
+
+
 
 };

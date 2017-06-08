@@ -1,4 +1,4 @@
-#include "Kinect.h"
+#include "Kinect_USF.h"
 #include "OgreVector2.h"
 #include "OgreMath.h"
 #include "OgreOverlay.h"
@@ -22,6 +22,9 @@ Kinect::Kinect(void)
 	mToso1Overlay->show();
 	mToso2Overlay->show();
 
+	mSensitivityFB = 1.0f;;
+	mSensitivityLR = 1.0f;
+
 	mToso1Overlay->setScroll(0.85f, 0.8f);
 	mToso2Overlay->setScroll(0.65f, 0.8f);
 
@@ -42,13 +45,16 @@ Kinect::Kinect(void)
 	mLeftHandPos = Ogre::Vector3(0,mYLeftMinDif,0);
 	mRightHandPos = Ogre::Vector3(0,mYRightMinDif,0);
 	mCenterPos = Ogre::Vector3::ZERO;
+#ifdef KINECT_2_AVAILABLE
+	m_pBodyFrameReader = NULL;
+#endif
 }
 
 
 void
-Kinect::addSkelListener(KinectSkelMsgr *listener)
+	Kinect::addSkelListener(KinectSkelMsgr *listener)
 {
-  mSkelListeners.push_back(listener);
+	mSkelListeners.push_back(listener);
 }
 
 
@@ -57,51 +63,98 @@ Kinect::~Kinect(void)
 }
 
 HRESULT
-Kinect::initSensor()
+	Kinect::initSensor()
 {
-#ifdef KINECT_AVAILABLE
-	HRESULT  hr;
+#ifdef KINECT_2_AVAILABLE
+	HRESULT hr2;
 
-	if ( !m_pNuiSensor  || true)
+	hr2 = GetDefaultKinectSensor(&m_pKinectSensor);
+	if (!FAILED(hr2))
 	{
+		mUseK2 = true;
 
-		HRESULT hr = NuiCreateSensorByIndex(0, &m_pNuiSensor);
+		if (m_pKinectSensor)
+		{
+			// Initialize the Kinect and get coordinate mapper and the body reader
+			IBodyFrameSource* pBodyFrameSource = NULL;
 
-		if ( FAILED(hr) )
+			hr2 = m_pKinectSensor->Open();
+
+			if (SUCCEEDED(hr2))
+			{
+				hr2 = m_pKinectSensor->get_CoordinateMapper(&m_pCoordinateMapper);
+			}
+
+			if (SUCCEEDED(hr2))
+			{
+				hr2 = m_pKinectSensor->get_BodyFrameSource(&pBodyFrameSource);
+			}
+
+			if (SUCCEEDED(hr2))
+			{
+				hr2 = pBodyFrameSource->OpenReader(&m_pBodyFrameReader);
+			}
+
+			// SafeRelease(pBodyFrameSource);
+		}
+
+		if (!m_pKinectSensor || FAILED(hr2))
+		{
+			// SetStatusMessage(L"No ready Kinect found!", 10000, true);
+			return E_FAIL;
+		}
+
+	} else
+		// return hr2;
+
+#endif
+
+#ifdef KINECT_AVAILABLE
+
+	{
+		HRESULT  hr;
+		mUseK2 = false;
+		if ( !m_pNuiSensor  || true)
+		{
+
+			HRESULT hr = NuiCreateSensorByIndex(0, &m_pNuiSensor);
+
+			if ( FAILED(hr) )
+			{
+				return hr;
+			}
+
+			m_instanceId = m_pNuiSensor->NuiDeviceConnectionId();
+		}
+
+		//DWORD nuiFlags = NUI_INITIALIZE_FLAG_USES_DEPTH_AND_PLAYER_INDEX | NUI_INITIALIZE_FLAG_USES_SKELETON |  NUI_INITIALIZE_FLAG_USES_COLOR;
+		DWORD nuiFlags =  NUI_INITIALIZE_FLAG_USES_SKELETON;
+		hr = m_pNuiSensor->NuiInitialize( nuiFlags );
+
+
+		if ( FAILED( hr ) )
 		{
 			return hr;
 		}
 
-		m_instanceId = m_pNuiSensor->NuiDeviceConnectionId();
-	}
+		if ( HasSkeletalEngine( m_pNuiSensor ) )
+		{
+			m_hNextSkeletonEvent = CreateEvent( NULL, TRUE, FALSE, NULL );
 
-	//DWORD nuiFlags = NUI_INITIALIZE_FLAG_USES_DEPTH_AND_PLAYER_INDEX | NUI_INITIALIZE_FLAG_USES_SKELETON |  NUI_INITIALIZE_FLAG_USES_COLOR;
-	DWORD nuiFlags =  NUI_INITIALIZE_FLAG_USES_SKELETON;
-	hr = m_pNuiSensor->NuiInitialize( nuiFlags );
+			//		hr = m_pNuiSensor->NuiSkeletonTrackingEnable( m_hNextSkeletonEvent, NUI_SKELETON_TRACKING_FLAG_ENABLE_SEATED_SUPPORT );
+			hr = m_pNuiSensor->NuiSkeletonTrackingEnable( m_hNextSkeletonEvent, 0 );
+			if( FAILED( hr ) )
+			{
+				return hr;
+			}
+		}
 
-
-	if ( FAILED( hr ) )
-	{
+		m_hEvNuiProcessStop = CreateEvent( NULL, FALSE, FALSE, NULL );
+		m_hThNuiProcess = CreateThread( NULL, 0, Nui_ProcessThread, this, 0, NULL );
 		return hr;
 	}
-
-	if ( HasSkeletalEngine( m_pNuiSensor ) )
-	{
-		m_hNextSkeletonEvent = CreateEvent( NULL, TRUE, FALSE, NULL );
-
-//		hr = m_pNuiSensor->NuiSkeletonTrackingEnable( m_hNextSkeletonEvent, NUI_SKELETON_TRACKING_FLAG_ENABLE_SEATED_SUPPORT );
-		hr = m_pNuiSensor->NuiSkeletonTrackingEnable( m_hNextSkeletonEvent, 0 );
-		if( FAILED( hr ) )
-		{
-			return hr;
-		}
-	}
-
-	m_hEvNuiProcessStop = CreateEvent( NULL, FALSE, FALSE, NULL );
-	m_hThNuiProcess = CreateThread( NULL, 0, Nui_ProcessThread, this, 0, NULL );
-	return hr;
 #else
-	return 0;
+		return 0;
 #endif
 
 }
@@ -145,9 +198,9 @@ Ogre::Vector3 Kinect::handPositionAdjusted(bool &usingLeft)
 	}
 }
 void 
-Kinect::callibrate(float delay, std::function<void(void)> callback)
+	Kinect::callibrate(float delay, std::function<void(void)> callback)
 {
-    mCallibrationFinishedCallback = callback;
+	mCallibrationFinishedCallback = callback;
 
 	if (delay == 0)
 	{
@@ -171,17 +224,161 @@ Kinect::callibrate(float delay, std::function<void(void)> callback)
 }
 
 void
-Kinect::cancelCallibration()
+	Kinect::cancelCallibration()
 {
-    mCallibrating = false;
+	mCallibrating = false;
 	mCallibrationFinishedCallback();
-    // mCallibrationFinishedCallback = NULL; // Note:  Why doesn't this work?
-    mCallibrationOverlay->hide();
-   
+	// mCallibrationFinishedCallback = NULL; // Note:  Why doesn't this work?
+	mCallibrationOverlay->hide();
+
 }
+
+
+#ifdef KINECT_2_AVAILABLE
+
 void
-Kinect::update(float time)
+	Kinect::updateK2()
 {
+	if (!m_pBodyFrameReader)
+	{
+		return;
+	}
+
+	IBodyFrame* pBodyFrame = NULL;
+
+	HRESULT hr = m_pBodyFrameReader->AcquireLatestFrame(&pBodyFrame);
+
+	if (SUCCEEDED(hr))
+	{
+
+		INT64 nTime = 0;
+
+		hr = pBodyFrame->get_RelativeTime(&nTime);
+
+		IBody* ppBodies[BODY_COUNT] = {0};
+
+		if (SUCCEEDED(hr))
+		{
+			hr = pBodyFrame->GetAndRefreshBodyData(_countof(ppBodies), ppBodies);
+		}
+
+		if (SUCCEEDED(hr))
+		{
+			for (int i = 0; i < BODY_COUNT; ++i)
+			{
+				IBody* pBody = ppBodies[i];
+				if (pBody)
+				{
+					BOOLEAN bTracked = false;
+					hr = pBody->get_IsTracked(&bTracked);
+
+					if (SUCCEEDED(hr) && bTracked)
+					{
+						Joint joints[JointType_Count]; 
+
+
+						hr = pBody->GetJoints(_countof(joints), joints);
+						if (SUCCEEDED(hr))
+						{
+
+							CameraSpacePoint shoulderPos = joints[JointType_SpineShoulder].Position;
+							CameraSpacePoint headPos = joints[JointType_Head].Position;
+
+							CameraSpacePoint leftShoulder =  joints[JointType_ShoulderLeft].Position;
+							CameraSpacePoint rightShoulder = joints[JointType_ShoulderRight].Position;
+							CameraSpacePoint leftElbow =  joints[JointType_ElbowLeft].Position;
+							CameraSpacePoint rightElbow =  joints[JointType_ElbowRight].Position;
+							CameraSpacePoint leftWrist =  joints[JointType_WristLeft].Position;
+							CameraSpacePoint rightWrist =  joints[JointType_WristRight].Position;
+							CameraSpacePoint leftHand =  joints[JointType_HandLeft].Position;
+							CameraSpacePoint rightHand =  joints[JointType_HandRight].Position;
+							CameraSpacePoint hip = joints[JointType_SpineBase].Position;
+
+
+							//for (int i = 0 ; i < NUI_SKELETON_POSITION_COUNT; i++)
+							//{
+							//	mSkelPositions[i] = Ogre::Vector3(pSkel->SkeletonPositions[i].x,pSkel->SkeletonPositions[i].y,pSkel->SkeletonPositions[i].z);
+							//}
+
+							for (int i = 0 ; i < JointType_Count; i++)
+							{
+								mSkelPositionsK2[i] = Ogre::Vector3(joints[i].Position.X ,joints[i].Position.Y,joints[i].Position.Z);
+							}
+
+
+							int x = 3;
+							Ogre::Vector2 leftVector(leftShoulder.X - rightShoulder.X, leftShoulder.Z - rightShoulder.Z);
+							leftVector.normalise();
+							Ogre::Vector2 FrontVector(leftVector.y, -leftVector.x);
+
+							//Ogre::Vector2 BaseVector((leftElbow.x + rightElbow.x + leftShoulder.x + rightShoulder.x) / 4,
+							//	(leftElbow.z + rightElbow.z + leftShoulder.z + rightShoulder.z) / 4);
+
+							Ogre::Vector2 BaseVector(hip.X, hip.Z);
+
+
+							if (recenterNext)
+							{
+								recenterNext = false;
+								baseVectorDelta = Ogre::Vector2(headPos.X, headPos.Z) - BaseVector;
+							}
+
+							// Note:  headPos is a 3D point, baseVector is a 2D point, hence z/y confusion
+							float xDisplacement = (headPos.X - BaseVector.x - baseVectorDelta.x) * leftVector.x + (headPos.Z - BaseVector.y-baseVectorDelta.y) * leftVector.y;
+
+							float xDisplacement2 = (headPos.X - BaseVector.x) * leftVector.x + (headPos.Z - BaseVector.y) * leftVector.y;
+
+							Ogre::Radian leftRightAngle1 = Ogre::Math::ATan2(-xDisplacement, headPos.Y - shoulderPos.Y + 0.5f);
+							Ogre::Radian leftRightAngle2 = Ogre::Math::ATan2(-xDisplacement2, headPos.Y - shoulderPos.Y + 0.5f);
+							mLeftRightAngle = leftRightAngle1 * 4 * mSensitivityLR;
+							mLeftRightTrue = leftRightAngle2 * 4;
+
+							float ZDisplacement = (headPos.X - BaseVector.x-baseVectorDelta.x) * FrontVector.x + (headPos.Z - BaseVector.y-baseVectorDelta.y) * FrontVector.y;
+
+							Ogre::Radian frontBackAngle1 = Ogre::Math::ATan2(ZDisplacement, headPos.Y - shoulderPos.Y + 0.5f);
+							mFrontBackAngle = frontBackAngle1 * 2 * mSensitivityFB;
+
+							mLeftHandPos = Ogre::Vector3(leftHand.X, leftHand.Y, leftHand.Z);
+							mRightHandPos = Ogre::Vector3(rightHand.X, rightHand.Y, rightHand.Z);
+							mCenterPos = Ogre::Vector3(shoulderPos.X, shoulderPos.Y, shoulderPos.Z);
+
+
+							mToso1Overlay->setRotate(Ogre::Radian(-mLeftRightAngle));
+							mToso1Overlay->setScroll(0.85f, 0.8f);
+
+							mToso2Overlay->setRotate(Ogre::Radian(-mFrontBackAngle));
+							mToso2Overlay->setScroll(0.65f, 0.8f);
+
+							mTimeSinceLastUpdate = 0;
+
+						}
+					}
+				}
+			}
+
+		}
+
+		for (int i = 0; i < _countof(ppBodies); ++i)
+		{
+			SafeRelease(ppBodies[i]);
+		}
+	}
+
+	SafeRelease(pBodyFrame);
+
+}
+
+#endif
+void
+	Kinect::update(float time)
+{
+#ifdef KINECT_2_AVAILABLE
+	if (mUseK2)
+	{
+		updateK2();
+	}
+#endif
+
 	mTimeSinceLastUpdate += time;
 	if (mCallibrating)
 	{
@@ -195,10 +392,10 @@ Kinect::update(float time)
 			mCalibrationClock -= time;
 			if (mCalibrationClock <= 0)
 			{
-                if (mCallibrationFinishedCallback != NULL)
-                {
-                    mCallibrationFinishedCallback();
-                }
+				if (mCallibrationFinishedCallback != NULL)
+				{
+					mCallibrationFinishedCallback();
+				}
 				recenterNext = true;
 				mCallibrating = false;	
 				mCallibrationOverlay->hide();
@@ -230,7 +427,16 @@ Kinect::update(float time)
 				lr = mLeftRightAngle.valueDegrees();
 				fb = mFrontBackAngle.valueDegrees();
 				lrt = mLeftRightTrue.valueDegrees();
-				(*it)->ReceiveSkelData(new SkelData(lr, fb, lrt, mSkelPositions));
+				if (mUseK2)
+				{
+#ifdef KINECT_2_AVAILABLE
+					(*it)->ReceiveSkelDataK2(new SkelDataK2(lr,fb,lrt,mSkelPositionsK2));
+#endif
+				}
+				else
+				{
+					(*it)->ReceiveSkelData(new SkelData(lr,fb,lrt,mSkelPositions));
+				}
 			} 
 			mTimeSinceLastLog = 0.0;
 		}
@@ -242,7 +448,7 @@ Kinect::update(float time)
 
 
 void
-Kinect::updateKinectSkeleton()
+	Kinect::updateKinectSkeleton()
 {
 #ifdef KINECT_AVAILABLE
 	NUI_SKELETON_FRAME SkeletonFrame = {0};
@@ -376,39 +582,39 @@ DWORD WINAPI Kinect::Nui_ProcessThread(LPVOID pParam)
 #endif 
 
 void
-Kinect::shutdown()
+	Kinect::shutdown()
 {
 #ifdef KINECT_AVAILABLE
-	    // Stop the Nui processing thread
-    if ( NULL != m_hEvNuiProcessStop )
-    {
-        // Signal the thread
-        SetEvent(m_hEvNuiProcessStop);
+	// Stop the Nui processing thread
+	if ( NULL != m_hEvNuiProcessStop )
+	{
+		// Signal the thread
+		SetEvent(m_hEvNuiProcessStop);
 
-        // Wait for thread to stop
-        if ( NULL != m_hThNuiProcess )
-        {
-            WaitForSingleObject( m_hThNuiProcess, INFINITE );
-            CloseHandle( m_hThNuiProcess );
-        }
-        CloseHandle( m_hEvNuiProcessStop );
-    }
+		// Wait for thread to stop
+		if ( NULL != m_hThNuiProcess )
+		{
+			WaitForSingleObject( m_hThNuiProcess, INFINITE );
+			CloseHandle( m_hThNuiProcess );
+		}
+		CloseHandle( m_hEvNuiProcessStop );
+	}
 
-    if ( m_pNuiSensor )
-    {
-        m_pNuiSensor->NuiShutdown( );
-    }
-    if ( m_hNextSkeletonEvent && ( m_hNextSkeletonEvent != INVALID_HANDLE_VALUE ) )
-    {
-        CloseHandle( m_hNextSkeletonEvent );
-        m_hNextSkeletonEvent = NULL;
-    }
+	if ( m_pNuiSensor )
+	{
+		m_pNuiSensor->NuiShutdown( );
+	}
+	if ( m_hNextSkeletonEvent && ( m_hNextSkeletonEvent != INVALID_HANDLE_VALUE ) )
+	{
+		CloseHandle( m_hNextSkeletonEvent );
+		m_hNextSkeletonEvent = NULL;
+	}
 
-    if ( m_pNuiSensor )
-    {
-        m_pNuiSensor->Release();
-        m_pNuiSensor = NULL;
-    }
+	if ( m_pNuiSensor )
+	{
+		m_pNuiSensor->Release();
+		m_pNuiSensor = NULL;
+	}
 #endif
 
 }
@@ -437,7 +643,7 @@ DWORD WINAPI Kinect::Nui_ProcessThread()
 		switch ( nEventIdx )
 		{
 		case WAIT_TIMEOUT:
-//			continueProcessing = false;
+			//			continueProcessing = false;
 			continue;
 
 			// If the stop event, stop looping and exit

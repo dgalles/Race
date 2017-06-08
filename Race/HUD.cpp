@@ -43,13 +43,13 @@ void  HUD::setLap(int currentLap, int numLaps)
 
 void HUD::setTarget(int currentTarget, int numTargets)
 {
-	mTargetText->setCaption("Targets Left: " + std::to_string(currentTarget) + " of " + std::to_string(numTargets));
+	mTargetText->setCaption("Targets Destroyed: " + std::to_string(currentTarget) + " of " + std::to_string(numTargets));
 
 }
 
 void HUD::setRaceDisplay()
 {
-	mTimeText->hide();
+	mTimeText->show();
 	mGateText->show();
 	mLapText->show();
 	mTargetText->hide();
@@ -79,18 +79,17 @@ void HUD::setGate(int currentGate, int numGates)
 }
 
 
-void HUD::setSpeed(int speed, bool ghost)
+void HUD::setSpeed(float speed, bool ghost)
 {
-	std::string score = "Speed = ";
-	score.append(std::to_string((long long)speed));
-	score.append(" m/s");
+	char buffer[30];
+	sprintf_s(buffer, 30, "Speed = %.1f m / s",speed);
 	if (ghost)
 	{
 		//		mGhostSpeedText->setCaption(("Ghost: " + score));
 	}
 	else
 	{
-		mSpeedText->setCaption(score);
+		mSpeedText->setCaption(buffer);
 	}
 }
 
@@ -110,11 +109,19 @@ void  HUD::setDebug(int val, std::string msg)
 
 
 
-void  HUD::setTime(float val)
+void  HUD::setTime(float val, bool remaining)
 {
-	std::string time = "Time = ";
-	time.append(std::to_string(val));
-	mTimeText->setCaption(time);
+	char buffer[30];
+	if (remaining)
+	{
+		sprintf_s(buffer, 30, "Time Remaining = %.1f seconds",val);
+	}
+	else
+	{
+		sprintf_s(buffer, 30, "Time Elapsed = %.1f seconds",val);
+	}
+
+	mTimeText->setCaption(buffer);
 
 }
 void  HUD::setScore(int val)

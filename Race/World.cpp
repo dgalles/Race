@@ -7,6 +7,8 @@
 #include "WaterMesh.h"
 #include "Menu.h"
 
+#include "Logger.h"
+
 #include "OgreOverlay.h"
 #include "OgreOverlayManager.h"
 #include "OgreOverlayContainer.h"
@@ -251,6 +253,7 @@ void World::LoadMap(std::string mapName)
 		getSafeVector3(gate, "Position", nextPos);
 		mGoalPositions.push_back(nextPos);
 		float scale = 60.0f;
+		scale = scale * mScaleGates;
 		getSafeFloat(gate, "Scale", scale);
 		mGoalScales.push_back(scale);
 		
@@ -371,6 +374,8 @@ World::World(Ogre::SceneManager *sceneManager, HUD *hud, RaceCamera * cam, Race 
 	mCurrentEditObject = 0;
 
 	mNumLaps = 1;
+	mScaleGates = 1.0f;
+	mTimeLimit = 2.0f;
 
 	mSceneManager->setSkyBox(true, "Skybox/Cloudy");
 
@@ -444,14 +449,21 @@ void World::reloadForEdit()
 
 }
 
-void World::StartGame(const char *worldname, bool doEdit)
+void World::StartGame(const char *worldname, bool timeLimit, bool doEdit)
 {
 	if (!mWorldLoaded)
 	{
 		LoadMap(worldname);
 		mWorldLoaded = true;
 	}
+	mTimed = timeLimit;
+	mCurrentTimeLimit = mTimeLimit * 60;
+	mGatesHit = 0;
+	mTimeHittingTarget = 0;
+	mTimeMissingTarget = 0;
 	mGameRunning = true;
+
+	mTimeSinceLastLog = 0;
 	if (doEdit)
 	{
 		mEditing = true;
@@ -1024,11 +1036,23 @@ void World::Think(float time)
 	{
 		return;
 	}
+
+
 	mPlayer->translate(mPlayer->getVelocity() * time);
 
 	mCurrentTime += time;
-
-	mHUD->setTime(mCurrentTime);
+	mCurrentTimeLimit -= time;
+	if (!mTimed)
+	{
+		mHUD->setTime(mCurrentTime, false);
+	} else {
+		if (mCurrentTimeLimit <= 0)
+		{
+			mCurrentTimeLimit = 0;
+			finishRace();
+		}
+		mHUD->setTime(mCurrentTimeLimit, true);
+	}
 
 	float dist = std::numeric_limits<float>::max();
 	bool laserCollide = false;
@@ -1102,6 +1126,7 @@ void World::Think(float time)
 
 	if (mGameType == GameType::RACE && mPlayer->collides(mGoals[0]))
 	{
+		mGatesHit++;
 		mCurrentIndex++;
 		SoundBank::getInstance()->play("clearGate");
 
@@ -1145,10 +1170,23 @@ void World::Think(float time)
 	Ogre::Vector3 laserStart;
 	Ogre::Vector3 laserDirection;
 
+	bool hitAny = false; 
 	if (mPlayer->isFiringLaser())
 	{
 		mPlayer->getLaser(laserStart, laserDirection);
-		mAIManager->rayCollision(laserStart,laserDirection, dist, time * mPlayer->getLaserDPS());
+		if (mAIManager->rayCollision(laserStart,laserDirection, dist, time * mPlayer->getLaserDPS()))
+		{
+			hitAny = true;
+		}
+		if (hitAny)
+		{
+			mTimeHittingTarget += time;
+		}
+		else
+		{
+			mTimeMissingTarget += time;
+
+		}
 	} 
 
 	for (unsigned int i = 0; i < mNumGoalsToShow && i < mGoals.size(); i++)
@@ -1163,13 +1201,28 @@ void World::Think(float time)
 	}
 	else if (mGameType == GameType::TARGET)
 	{
-		mHUD->setTarget(mAIManager->numEnemies(), mInitialTargets);
+		mHUD->setTarget(mInitialTargets - mAIManager->numEnemies(), mInitialTargets);
 		const Enemy *closest = mAIManager->getClosestEnemy(mPlayer->getPosition());
 		if (closest != NULL)
 		{
 			PointArrowAt(closest->getPosition());
 		}
 	}
+
+
+			mTimeSinceLastLog += time;
+		if(mTimeSinceLastLog >= Logger::getInstance()->getTimeStep())
+		{
+		
+		for (std::vector<PlyrDataMsgr *>::iterator it = mLoggersToSend.begin(); it != mLoggersToSend.end(); it++)
+	{
+		(*it)->ReceivePlyrData(new PlyrData("", mGatesHit, mPlayer->getSpeed(), mTimeHittingTarget, mTimeMissingTarget));
+	} 
+
+			mTimeSinceLastLog = 0.0;
+		}
+
+
 
 
 }

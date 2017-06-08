@@ -40,40 +40,54 @@ Logger *Logger::getInstance()
 }
 SOCKET tcpConnect(const char * hostname, int port) 
 {
-	int error;
-	SOCKET handle;
-	struct hostent *host;
-	struct sockaddr_in server;
-
-	host = gethostbyname(hostname);
-	handle = socket(AF_INET, SOCK_STREAM, 0);
-	struct timeval timeout;      
-	timeout.tv_sec = 10;
-	timeout.tv_usec = 0;
-	if (setsockopt (handle, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout,
-		sizeof(timeout)) < 0) { perror("setsockopt failed\n"); }
-	if (handle == INVALID_SOCKET)
+	try
 	{
-		perror("Socket");
-		handle = 0;
-	} 
-	else 
-	{
-		server.sin_family = AF_INET;
-		server.sin_port = htons(port);
-		server.sin_addr = *((struct in_addr *) host->h_addr);
-		memset(&(server.sin_zero), 0, 8);
+		int error;
+		SOCKET handle;
+		struct hostent *host;
+		struct sockaddr_in server;
 
-		error = connect(handle, (struct sockaddr *) &server,
-			sizeof(struct sockaddr));
-
-		if (error == -1)
+		host = gethostbyname(hostname);
+		if (host == 0)
 		{
-			perror("Connect");
-			handle = 0;
+			return 0;
 		}
+		handle = socket(AF_INET, SOCK_STREAM, 0);
+		struct timeval timeout;      
+		timeout.tv_sec = 10;
+		timeout.tv_usec = 0;
+		if (setsockopt (handle, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout,
+			sizeof(timeout)) < 0) { perror("setsockopt failed\n"); }
+		if (handle == INVALID_SOCKET)
+		{
+			perror("Socket");
+			handle = 0;
+		} 
+		else 
+		{
+			server.sin_family = AF_INET;
+			server.sin_port = htons(port);
+			server.sin_addr = *((struct in_addr *) host->h_addr);
+			memset(&(server.sin_zero), 0, 8);
+
+
+			int len = sizeof(struct sockaddr);
+
+			error = connect(handle, (struct sockaddr *) &server, len);
+			//	sizeof(struct sockaddr));
+
+			if (error == -1)
+			{
+				perror("Connect");
+				handle = 0;
+			}
+		}
+		return handle;
 	}
-	return handle;
+	catch (...)
+	{ 
+		return 0;
+	}
 }
 
 connection * sslConnect(const char *host, int port) 
@@ -289,7 +303,15 @@ bool Logger::Login()
 	failure->show();
 	success->hide();
 
-	connection *secureConnection = init(mHost.c_str(), mPort, mCurrentUsername, mCurrentPassword);
+	connection *secureConnection = NULL;
+	try
+	{
+		secureConnection = init(mHost.c_str(), mPort, mCurrentUsername, mCurrentPassword);
+	}
+	catch (...)
+	{
+
+	}
 
 	if (secureConnection == NULL) {
         printf("could not connect\n");
@@ -546,15 +568,20 @@ void
 		{
 			sdata = mSkelData.front();
 			mSkelData.pop();
-			mSkelLock.unlock();
-
 			daemonSendSkelData(sdata);
+		}
+				else if (!mSkelDataK2.empty())
+		{
+			SkelDataK2 *k2data = mSkelDataK2.front();
+			mSkelDataK2.pop();
+			daemonSendSkelDataK2(k2data);
+
 		}
 		else
 		{
-			mSkelLock.unlock();
 			stest = true;
 		}
+			mSkelLock.unlock();
 		// if the session is ended and both queues are empty, break
 		if(mSessionEnded && ptest && stest) 
 			break;
@@ -664,12 +691,10 @@ void
 	int sentBytes = 0;
 	timeStepsPlayer++;
 
-	LogAndSend("CoinsL", pdata->leftCoinsCollected, timeStepsPlayer);
-	LogAndSend("CoinsR", pdata->rightCoinsCollected, timeStepsPlayer);
-	LogAndSend("CoinsM", pdata->middleCoinsCollected, timeStepsPlayer);
-	LogAndSend("CoinsMissL", pdata->leftCoinsMissed, timeStepsPlayer);
-	LogAndSend("CoinsMissR", pdata->rightCoinsMissed, timeStepsPlayer);
-	LogAndSend("CoinsMissM", pdata->middleCoinsMissed, timeStepsPlayer);
+	LogAndSend("Speed", pdata->speed, timeStepsPlayer);
+	LogAndSend("GatesHit", pdata->gatesHit, timeStepsPlayer);
+	LogAndSend("TimeHittingTargets", pdata->timeHittingTargets, timeStepsPlayer);
+	LogAndSend("TimeMissingTargets", pdata->timeMissingTargets, timeStepsPlayer);
 	delete pdata;
 }
 
@@ -684,19 +709,20 @@ void
 	LogAndSend("skel_complete", sdata->completeSkeleton,SKELETON_SIZE*3,timeStepsSkel);
 
 	delete sdata;
-	//memset(mKinBuf1, 0, DEFAULT_BUFSIZE);
-	//sprintf_s(mKinBuf1, 
-	//	DEFAULT_BUFSIZE, 
-	//	"db.patients.update({\"patient_id\":%s, \"timestamp\": \"%s\"}, {$set: {\"skel_lr.%d.%d\":%f}})", 
-	//	mCurrentID.c_str(), 
-	//	mBegBuf, 
-	//	mMinutes2, 
-	//	mSeconds2 % 60, 
-	//	sdata->lrAngle);
-	//WriteToLog(mKinBuf1, DEFAULT_BUFSIZE);
-	//if(DB_Send(mKinBuf1, strlen(mKinBuf1), mLRSock) == 1)
-	//	WriteToLog("DB_Send failed.\n", 18);
 
+}
+
+void
+	Logger::daemonSendSkelDataK2(SkelDataK2 *sdata)
+{
+	timeStepsSkel++;
+
+	LogAndSend("skel_lr", sdata->lrAngle, timeStepsSkel);
+	LogAndSend("skel_lr_true", sdata->lrAngleTrue, timeStepsSkel);
+	LogAndSend("skel_fb", sdata->fbAngle, timeStepsSkel);
+	LogAndSend("skel_complete", sdata->completeSkeleton,SKELETON_SIZE_K2*3,timeStepsSkel);
+
+	delete sdata;
 
 }
 
@@ -709,7 +735,6 @@ void
 {
 	if(mSessionEnded || !mSessionStarted)
 		return;
-
 	mPlyrLock.lock();
 	mPlyrData.push(data);
 	mPlyrLock.unlock();
@@ -730,6 +755,25 @@ void
 	mSkelLock.unlock();
 
 }
+
+
+
+void
+	Logger::ReceiveSkelDataK2(SkelDataK2 *data) 
+{
+	if(mSessionEnded || !mSessionStarted)
+	{
+		return;
+	}
+	SkelDataK2 *localcpy = data;
+	mSkelLock.lock();
+	mSkelDataK2.push(localcpy);
+	mSkelLock.unlock();
+
+}
+
+
+
 /*------------------------------------------------------------------------------
 * Writes all relevant data to output file.
 * File name convention: 

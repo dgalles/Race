@@ -17,13 +17,10 @@ struct PlyrData
 {
   Ogre::String id;
   
-  int leftCoinsCollected;
-  int rightCoinsCollected;
-  int middleCoinsCollected;
-  int leftCoinsMissed;
-  int middleCoinsMissed;
-  int rightCoinsMissed;
+  int gatesHit;
   float speed;
+  float timeHittingTargets;
+  float timeMissingTargets;
 
   //PlyrData()
   //{
@@ -38,29 +35,22 @@ struct PlyrData
   //}
 
   PlyrData(Ogre::String ID = "", 
-           int leftCollect = 0, 
-           int rightCollect = 0, 
-           int middleCollect = 0,
-		   int leftMissed = 0,
-		   int rightMissed = 0,
-		   int middleMissed = 0,
-		   float spd = 0) :
-  id(ID), leftCoinsCollected(leftCollect), rightCoinsCollected(rightCollect),middleCoinsCollected(middleCollect),
-	  leftCoinsMissed(leftMissed), rightCoinsMissed(rightMissed), middleCoinsMissed(middleMissed), speed(spd)
+           int gates_Hit = 0, 
+           float spd = 0, 
+		   float time_hit = 0,
+		   float time_miss =0) :
+  id(ID), gatesHit(gates_Hit), speed(spd),timeHittingTargets(time_hit),
+	  timeMissingTargets(time_miss)
   {
-
   }
 
   PlyrData(PlyrData *data)
   {
 	  id = data->id;
-	  leftCoinsCollected  = data->leftCoinsCollected;
-	  rightCoinsCollected = data->rightCoinsCollected;
-	  middleCoinsCollected = data->middleCoinsCollected;
-	  leftCoinsMissed = data ->leftCoinsMissed;
-	  middleCoinsMissed = data->middleCoinsMissed;
-	  rightCoinsMissed = data->rightCoinsMissed;
+	  gatesHit  = data->gatesHit;
 	  speed = data->speed;
+	  timeHittingTargets = data->timeHittingTargets;
+	  timeMissingTargets = data ->timeMissingTargets;
   }
 };
 
@@ -78,6 +68,9 @@ protected:
 };
 
 #define SKELETON_SIZE 21
+
+#define SKELETON_SIZE_K2 25
+
 
 struct SkelData
 {
@@ -121,10 +114,51 @@ struct SkelData
   }
 };
 
+struct SkelDataK2
+{
+  float lrAngle;
+  float fbAngle;
+  float lrAngleTrue;
+  float completeSkeleton[SKELETON_SIZE_K2 * 3];
+
+  SkelDataK2()
+  {
+	for (int i = 0; i < SKELETON_SIZE_K2; i++)
+	{
+		completeSkeleton[i] = 0.0f;
+	}
+  }
+
+  SkelDataK2(float lr, float fb, float lrt, Ogre::Vector3 skel[])
+  {
+	      lrAngle = lr;
+    fbAngle = fb;
+	lrAngleTrue = lrt;
+	for (int i = 0; i < SKELETON_SIZE_K2; i++)
+	{
+		completeSkeleton[3*i] = skel[i].x;
+		completeSkeleton[3*i+1] = skel[i].y;
+		completeSkeleton[3*i+2] = skel[i].z;
+	}
+  }
+  SkelDataK2(SkelDataK2 *sd)
+  {
+	      lrAngle = sd->lrAngle;
+    fbAngle = sd->fbAngle;
+	lrAngleTrue = sd->lrAngleTrue;
+	for (int i = 0; i < SKELETON_SIZE_K2 * 3; i++)
+	{
+		completeSkeleton[i] = sd->completeSkeleton[i];
+	}
+  }
+};
+
 class KinectSkelMsgr
 {
 public:
   virtual void ReceiveSkelData(SkelData *data) { }
+  virtual void ReceiveSkelDataK2(SkelDataK2 *data) { }
+
 
 protected:
   float mSkelLogInterval;

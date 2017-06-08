@@ -2,7 +2,7 @@
 
 #include "Player.h"
 #include "World.h"
-#include "Kinect.h"
+#include "Kinect_USF.h"
 #include "Achievements.h"
 #include "InputHandler.h"
 #include "HUD.h"
@@ -108,6 +108,8 @@ Player::Player(World *world, Kinect *k, Achievements *ach) :
 }
 
 
+
+
 void Player::reset()
 {
 	mInvertControls = false;
@@ -116,7 +118,7 @@ void Player::reset()
 	mKinectSensitivityFB = 1.0f;
 	mKinectSensitivityLR = 1.0f;
 	mDegreesPerSecond = 45.0f;
-	mMaxSpeed = 500;
+	mMaxSpeed = 5;
 	mSpeed = 0;
 
 	mAccel = 10;
@@ -189,13 +191,13 @@ void Player::Think(float time)
 	}
 
 	mSpeed +=frontBack.valueDegrees() * time * -mAccel;
-	if (mSpeed > mMaxSpeed)
+	if (mSpeed > mMaxSpeed * 100)
 	{
-		mSpeed = mMaxSpeed;
+		mSpeed = mMaxSpeed* 100;
 	}
-	if (mSpeed < -mMaxSpeed)
+	if (mSpeed < -mMaxSpeed* 100)
 	{
-		mSpeed = -mMaxSpeed;
+		mSpeed = -mMaxSpeed* 100;
 	}
 
 	if (mTurretScaleY == 1.0f)
@@ -251,7 +253,7 @@ void Player::Think(float time)
 
 	}
 
-	mWorld->getHUD()->setSpeed((int) mSpeed);
+	mWorld->getHUD()->setSpeed(mSpeed / 100.0f);
 
 
 	if (Ogre::Math::Abs(leftRight) > Ogre::Degree(10) && (mTurretScaleY == 0.0f || !mNoTurnFire))
@@ -279,6 +281,8 @@ void Player::setOrientation(Ogre::Quaternion newOrientation)
 
 void Player::SendData(float time)
 {
+
+
 
 
 }

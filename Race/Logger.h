@@ -56,6 +56,7 @@ public:
 
   //bool TrackFullSkel(void) { return mTrackFullSkel; }
   virtual void ReceiveSkelData(SkelData *data);
+    virtual void ReceiveSkelDataK2(SkelDataK2 *data);
 
   /* DBMsgr inherited functions */
   virtual bool IsConnected(void) { return mConnected; }
@@ -95,6 +96,8 @@ private:
   char mBegBuf[sizeof "2011-10-08T07:07:09Z"];
   char mEndBuf[sizeof "2011-10-08T07:07:09Z"];
   std::queue<SkelData *> mSkelData;
+  std::queue<SkelDataK2 *> mSkelDataK2;
+
   std::queue<PlyrData *> mPlyrData;
   std::mutex mSkelLock;
   std::mutex mPlyrLock;
@@ -106,6 +109,7 @@ private:
   void daemonFunc();
   void daemonSendPlyrData(PlyrData *pdata);
   void daemonSendSkelData(SkelData *pdata);
+  void daemonSendSkelDataK2(SkelDataK2 *sdata);
 
   int DB_Connect(char *host, char *port, ServerCom *com);
   int DB_Disconnect(ServerCom *com);

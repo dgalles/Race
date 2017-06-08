@@ -20,8 +20,8 @@ public:
 
 	void AddEnemy(std::string enemyType, Ogre::Vector3 position,const char *model = 0, float scale = 1.0f);
 
-	void rayCollision(Ogre::Vector3 rayStart, Ogre::Vector3 rayDirection, float &dist, float damage);
-	void rayCollision(Ogre::Vector3 rayStart, Ogre::Vector3 rayDirection, float damage);
+	bool rayCollision(Ogre::Vector3 rayStart, Ogre::Vector3 rayDirection, float &dist, float damage);
+	bool rayCollision(Ogre::Vector3 rayStart, Ogre::Vector3 rayDirection, float damage);
 
 	void destroyEnemies();
 

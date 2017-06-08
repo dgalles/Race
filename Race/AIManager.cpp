@@ -52,14 +52,17 @@ const Enemy *AIManager::getClosestEnemy(Ogre::Vector3 position)
 	return closestEnemy;
 }
 
-void AIManager::rayCollision(Ogre::Vector3 rayStart, Ogre::Vector3 rayDirection, float &dist, float damage)
+bool AIManager::rayCollision(Ogre::Vector3 rayStart, Ogre::Vector3 rayDirection, float &dist, float damage)
 {
 	std::vector<Enemy *>dead;
+
+	bool hitany = false;
 
 	for (std::vector<Enemy *>::iterator it = mEnemies.begin(); it != mEnemies.end(); it++)
 	{
 		if ((*it)->collides(rayStart, rayDirection, dist))
 		{
+			hitany = true;
 			(*it)->decreaseHealth(damage);
 
 		//	mWorld->getHUD()->setDebug((*it)->getHealth(), "Health");
@@ -77,8 +80,7 @@ void AIManager::rayCollision(Ogre::Vector3 rayStart, Ogre::Vector3 rayDirection,
 		mEnemies.erase(std::remove(mEnemies.begin(), mEnemies.end(), (*it)),mEnemies.end());
 		delete			(*it);
 	}
-
-
+	return hitany;
 }
 
 void AIManager::destroyEnemies()
@@ -92,10 +94,10 @@ void AIManager::destroyEnemies()
 
 
 
-void AIManager::rayCollision(Ogre::Vector3 rayStart, Ogre::Vector3 rayDirection, float damage)
+bool AIManager::rayCollision(Ogre::Vector3 rayStart, Ogre::Vector3 rayDirection, float damage)
 {
 	float dummy =  std::numeric_limits<float>::max();
-	rayCollision(rayStart, rayDirection, dummy, damage);
+	return rayCollision(rayStart, rayDirection, dummy, damage);
 }
 
 

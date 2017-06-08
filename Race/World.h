@@ -2,6 +2,7 @@
 #include "OgreQuaternion.h"
 #include <queue>
 #include "Ghost.h"
+#include "Receivers.h"
 
 namespace Ogre {
 	class SceneNode;
@@ -32,7 +33,7 @@ public:
 	void Think(float time);
 
 	int worldRand();
-	void StartGame(const char *worldName, bool doEdit = false);
+	void StartGame(const char *worldName, bool timeLimit = false, bool doEdit = false);
 
 	RaceCamera *getCamera() { return mCamera; }
 	void LoadMap(std::string map);
@@ -40,14 +41,31 @@ public:
 	void enemyDestroyed(float value);
 	int getNumLaps() { return mNumLaps; }
 	void setNumLaps(int laps) { mNumLaps = laps; }
+	void addPlayerListener(PlyrDataMsgr *listener) { mLoggersToSend.push_back(listener); }
+
+	float getTimeLimit() { return mTimeLimit; }
+	void setTimeLimit(float newLimit) { mTimeLimit = newLimit; }
+
+	enum GameType {RACE, TARGET};
+
+	float getScaleGates() { return mScaleGates;}
+	void setScaleGates(float newScale) {mScaleGates = newScale; }
+
+	GameType getGameType() {return mGameType;}
 
 protected:
 	void doEdit(float time);
 	void SaveFile(char *filename);
 	void unselectAll();
 	void reloadForEdit();
-
+	float mTimeLimit;
+	float mCurrentTimeLimit;
+	bool mTimed;
+	GameType mGameType;
 	void finishRace();
+
+
+	float mScaleGates;
 
 	void PointArrowAt(Ogre::Vector3 pos);
 
@@ -60,6 +78,7 @@ protected:
 	int mNumLaps;
 
 	float mDisp;
+	float mTimeSinceLastLog;
 
     std::vector<GameObject *> mDynamicObjects;
     std::vector<GameObject *> mStaticObjects;
@@ -82,6 +101,12 @@ protected:
 	bool mWorldLoaded;
 	float mCurrentTime;
 	bool mEditing;
+
+
+	int mGatesHit;
+	float mTimeHittingTarget;
+	float mTimeMissingTarget;
+
 	
 	GameObject *mCurrentEditObject;
 
@@ -94,9 +119,11 @@ protected:
 	enum ObjectSelect {GATE, STATIC, DYNAMIC};
 	ObjectSelect mSelectedType;
 
-	enum GameType {RACE, TARGET};
-	GameType mGameType;
 	int mInitialTargets;
 	float mPlacementScale;
+
+		std::vector<PlyrDataMsgr *> mLoggersToSend;
+
+
 
 };

@@ -79,16 +79,16 @@ protected:
 	void createFrameListener(void);
 
 
-	void startGame(bool doEdit = false);
+	void startGame(std::string raceType, bool doEdit = false);
 	void startRace();
     void setupMenus(bool login = true) ;
 	void createStores(Menu *parent, std::vector<Store *> &stores);
 
 	// HACK!!
-	std::function<void(void)>createFunction(std::string str);
+	std::function<void(void)>createFunction(std::string gameType, std::string level);
 
-	std::string mCurrentLevel;
-
+	std::map<std::string, std::string> mCurrentLevel;
+	
 	AIManager *mAIManager;
 	InputHandler *mInputHandler;
 	World *mWorld;

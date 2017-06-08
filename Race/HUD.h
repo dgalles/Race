@@ -18,9 +18,9 @@ public:
 	void update(float time);
 
 	void showRaceOver(bool show);
-	void setSpeed(int speed, bool ghost = false);
+	void setSpeed(float speed, bool ghost = false);
 
-	void setTime(float time);
+	void setTime(float time, bool remaining = false);
 	void setScore(int score);
 
 	void setDebug(float val, std::string msg);

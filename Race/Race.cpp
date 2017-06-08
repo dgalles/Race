@@ -12,7 +12,7 @@
 
 #include "Ogre.h"
 #include "OgreConfigFile.h"
-#include "Kinect.h"
+#include "Kinect_USF.h"
 #include "Menu.h"
 #include "Store.h"
 #include "OgreOverlaySystem.h"
@@ -135,14 +135,31 @@ Race::createScene()
 	
 	
 	mKinect->addSkelListener(mLogger);
+	mWorld->addPlayerListener(mLogger);
 
 }
 void
-	Race::startGame(bool doEdit)
+	Race::startGame(std::string raceType, bool doEdit)
 {
-	mLogger->StartSession( "\"subgame\":\"normal\"");
+
+	char header[500];
+	bool timeLimit = raceType == "TargetRace";
+	mWorld->StartGame(mCurrentLevel[raceType].c_str(),timeLimit, doEdit);
+
+	if (raceType =="Race")
+	{
+	sprintf_s(header, 500, "\"subgame\":\"race\", \"level\":\"%s\"", (mCurrentLevel[raceType].c_str()));
+	}
+	else if (raceType == "Target")
+	{
+	sprintf_s(header, 500, "\"subgame\":\"target\", \"level\":\"%s\"", (mCurrentLevel[raceType].c_str()));
+	}
+	else
+	{
+	sprintf_s(header, 500, "\"subgame\":\"targetTimed\", \"level\":\"%s\"", (mCurrentLevel[raceType].c_str()));
+	}
+	mLogger->StartSession(header);
 	mKinect->StartSession();
-	mWorld->StartGame(mCurrentLevel.c_str(), doEdit);
 	mFrameListener->setPaused(false);
 }
 
@@ -273,9 +290,9 @@ void Race::createStores(Menu *parent, std::vector<Store *> &stores)
 
 }
 
- std::function<void(void)> Race::createFunction(std::string str)
+ std::function<void(void)> Race::createFunction(std::string gameType, std::string level)
  {
-	 return [this,str]() { this->mCurrentLevel = str; };
+	 return [this,gameType, level]() { this->mCurrentLevel[gameType] = level; };
  }
 
 
@@ -335,7 +352,12 @@ Race::setupMenus(bool loginRequired)
     Menu *confirmMenu = new Menu("Confirm Profile Reset", "profleReset", 0.1f, 0.1f, 0.1f, advancedOptions);
 	Menu *endGameMenu = new Menu("Game Over!", "gameOver", 0.1f, 0.1f, 0.1f, NULL);
 
+
 	Menu *startGameMenu = new Menu("Choose Race", "startgame", 0.05f, 0.1f, 0.07f, mainMenu);
+
+	Menu *raceMenu = new Menu("Timed Race", "timedRace", 0.05f, 0.1f, 0.08f, startGameMenu); 
+	Menu *targetHunt = new Menu("Target Hunt", "targetHunt", 0.05f, 0.1f, 0.08f, startGameMenu); 
+	Menu *timedTargetHunt = new Menu("Timed Target Hunt", "timedtargetHunt", 0.05f, 0.1f, 0.08f, startGameMenu); 
 
 //	std::vector<Store *> stores;
 //	createStores(mainMenu, stores);
@@ -358,6 +380,9 @@ Race::setupMenus(bool loginRequired)
 	menus->addMenu(endGameMenu);
 	menus->addMenu(confirmMenu);
 	menus->addMenu(startGameMenu);
+	menus->addMenu(raceMenu);
+	menus->addMenu(targetHunt);
+	menus->addMenu(timedTargetHunt);
 
 	/////////////////////////////////////////////////
 	// Login Menu 
@@ -381,44 +406,125 @@ Race::setupMenus(bool loginRequired)
 	///  Start Game Menu
 	////////////////////////////////////////////////////////
 
-
-	startGameMenu->AddSelectElement("Start", [this, startGameMenu]() {startGameMenu->disable(), this->startGame();});
-
-
-	std::map<std::string, std::string> levels;
-	ReadMapList(levels, "MapList.maps");
-
-	std::vector<Ogre::String> levelNames;
-	std::vector<std::function<void()>> levelCallbacks;
+	 startGameMenu->AddSelectElement("Checkpoint Race", [raceMenu,startGameMenu]() {startGameMenu->disable(); raceMenu->enable();});
+	 startGameMenu->AddSelectElement("Target Practice", [startGameMenu,targetHunt]() {startGameMenu->disable(); targetHunt->enable();});
+	 startGameMenu->AddSelectElement("Timed Target Practice", [startGameMenu,timedTargetHunt]() {startGameMenu->disable(); timedTargetHunt->enable();});
+	 startGameMenu->AddSelectElement("Return to Main Menu", [startGameMenu, mainMenu]() {startGameMenu->disable(); mainMenu->enable();});
 
 
+	//////////////////////////////////////////////////////
+	///  Race Menu
+	////////////////////////////////////////////////////////
 
-	for (std::map<std::string, std::string>::iterator it = levels.begin();
-		 it != levels.end();
+
+	raceMenu->AddSelectElement("Start", [this, raceMenu]() {raceMenu->disable(), this->startGame("Race", false);});
+
+
+
+	std::map<std::string, std::string> levelsRace;
+	ReadMapList(levelsRace, "Races.maps");
+
+	std::vector<Ogre::String> levelNamesRace;
+	std::vector<std::function<void()>> levelCallbacksRace;
+
+
+
+	for (std::map<std::string, std::string>::iterator it = levelsRace.begin();
+		 it != levelsRace.end();
 		 it++)
 	{
-		levelNames.push_back((*it).first);
+		levelNamesRace.push_back((*it).first);
 		std::string level = (*it).second;
-		levelCallbacks.push_back(createFunction(level));
+		levelCallbacksRace.push_back(createFunction("Race", level));
 	}
 
-	if (levels.size() > 0)
+	if (levelsRace.size() > 0)
 	{
-		mCurrentLevel = levels[levelNames[0]];
+		mCurrentLevel["Race"] = levelsRace[levelNamesRace[0]];
 	}
-	startGameMenu->AddChooseEnum("Map",levelNames,levelCallbacks,0, false);	
-	startGameMenu->AddChooseInt("Number of Laps", [w](int x) {w->setNumLaps(x); }, 1, 20,w->getNumLaps(), 1, true);
+	raceMenu->AddChooseEnum("Map",levelNamesRace,levelCallbacksRace,0, false);	
+	raceMenu->AddChooseInt("Number of Laps", [w](int x) {w->setNumLaps(x); }, 1, 20,w->getNumLaps(), 1, true);
+	 raceMenu->AddSelectElement("Return to Game Type Select", [startGameMenu, raceMenu]() {raceMenu->disable(); startGameMenu->enable();});
+
+
+	//////////////////////////////////////////////////////
+	///  Target Menu
+	////////////////////////////////////////////////////////
+
+	targetHunt->AddSelectElement("Start", [this, targetHunt]() {targetHunt->disable(), this->startGame("Target", false);});
+
+
+	std::map<std::string, std::string> levelsTarget;
+	ReadMapList(levelsTarget, "Targets.maps");
+
+	std::vector<Ogre::String> levelNameTargets;
+	std::vector<std::function<void()>> levelCallbacksTarget;
 
 
 
+	for (std::map<std::string, std::string>::iterator it = levelsTarget.begin();
+		 it != levelsTarget.end();
+		 it++)
+	{
+		levelNameTargets.push_back((*it).first);
+		std::string level = (*it).second;
+		levelCallbacksTarget.push_back(createFunction("Target", level));
+	}
 
+	if (levelsTarget.size() > 0)
+	{
+		mCurrentLevel["Target"] = levelsTarget[levelNameTargets[0]];
+	}
+	targetHunt->AddChooseEnum("Map",levelNameTargets,levelCallbacksTarget,0, false);	
+
+	targetHunt->AddSelectElement("Return to Game Type Select", [startGameMenu, targetHunt]() {targetHunt->disable(); startGameMenu->enable();});
+
+
+
+	//////////////////////////////////////////////////////
+	///  Target Race Menu
+	////////////////////////////////////////////////////////
+
+
+	timedTargetHunt->AddSelectElement("Start", [this, timedTargetHunt]() {timedTargetHunt->disable(), this->startGame("TargetRace", false);});
+
+
+	std::map<std::string, std::string> levelsTargetTimed;
+	ReadMapList(levelsTargetTimed, "Targets.maps");
+
+	std::vector<Ogre::String> levelNamesTargetTimed;
+	std::vector<std::function<void()>> levelCallbacksTargetTimed;
+
+
+
+	for (std::map<std::string, std::string>::iterator it = levelsTargetTimed.begin();
+		 it != levelsTargetTimed.end();
+		 it++)
+	{
+		levelNamesTargetTimed.push_back((*it).first);
+		std::string level = (*it).second;
+		levelCallbacksTargetTimed.push_back(createFunction("TargetRace", level));
+	}
+
+	if (levelsTargetTimed.size() > 0)
+	{
+		mCurrentLevel["TargetRace"] = levelsTargetTimed[levelNamesTargetTimed[0]];
+	}
+
+
+	timedTargetHunt->AddChooseEnum("Map",levelNameTargets,levelCallbacksTarget,0, false);	
+	timedTargetHunt->AddChooseFloat("Time Limit (minutes)",[w](float x) { w->setTimeLimit(x);}, 0.5, 10, w->getTimeLimit(), 0.25, true);	
+
+
+	timedTargetHunt->AddSelectElement("Return to Game Type Select", [startGameMenu, timedTargetHunt]() {timedTargetHunt->disable(); startGameMenu->enable();});
 
 	/////////////////////////////////////////////////
 	// Options Submenu:  Gameplay 
 	//////////////////////////////////////////////////
 
    
-    gameplayOptions->AddChooseFloat("Player Speed", [p](float x) {p->setMaxSpeed(x); }, 50.0f, 1000.0f, p->getMaxSpeed(), 10, true);
+    gameplayOptions->AddChooseFloat("Scale Gates", [w](float x) {w->setScaleGates(x); }, 1,5, w->getScaleGates(), 0.1, true);
+    gameplayOptions->AddChooseFloat("Player Speed", [p](float x) {p->setMaxSpeed(x); }, 1.0f, 10.0f, p->getMaxSpeed(), 10, true);
     gameplayOptions->AddChooseFloat("Player Turning Angle (Degrees / sec)", [p](float x) {p->setDegreesPerSecond(x); }, 10, 180, p->getDegressPerSecond(), 0.5f, true);
     gameplayOptions->AddChooseFloat("Player Acceleration", [p](float x) {p->setAcceleration(x); }, 10, 180, p->getAcceleration(), 5, true);
 
@@ -438,8 +544,8 @@ Race::setupMenus(bool loginRequired)
 	//////////////////////////////////////////////////
 
 //    controlOptions->AddChooseBool("Callibrate Kinect Every Game", [ ](bool x) { },true, true);
-    controlOptions->AddChooseFloat("Kinect Sensitivity Left / Right", [](float x) { }, 0.7f, 1.5f, 1.f, 0.1f, true);
-    controlOptions->AddChooseFloat("Kinect Sensitivity Front / Back", [](float x) { }, 0.7f, 1.5f, 1.f, 0.1f, true);
+	controlOptions->AddChooseFloat("Kinect Sensitivity Left / Right", [k](float x) {k->setSensitivityLR(x);  }, 0.5f, 2.0f,k->getSensitivityLR(), 0.1f, true);
+	controlOptions->AddChooseFloat("Kinect Sensitivity Front / Back", [k](float x) {k->SetSensitivityFB(x); }, 0.5f, 2.0f, k->getSensitivityFB(), 0.1f, true);
     controlOptions->AddSelectElement("Callibrate Kinect Now", [controlOptions, k]() {controlOptions->disable(); k->callibrate(4.0f, [controlOptions]() {controlOptions->enable();});});
     controlOptions->AddChooseBool("Invert Front/Back Controls", [](bool x) { },false, true);
 	controlOptions->AddChooseBool("Enable Kinect", [p](bool x) { p->setEnableKinect(x);  }, p->getEnableKinect(), true);
@@ -455,9 +561,9 @@ Race::setupMenus(bool loginRequired)
 	//////////////////////////////////////////////////
 
 
-	mainMenu->AddSelectElement("Select Race To Run", [startGameMenu, mainMenu]() { mainMenu->disable();startGameMenu->enable(); });
+	mainMenu->AddSelectElement("Select Game", [startGameMenu, mainMenu]() { mainMenu->disable();startGameMenu->enable(); });
 
-//	mainMenu->AddSelectElement("Start Edit", [mainMenu,this]() { mainMenu->disable(); this->startGame(true); });
+	//mainMenu->AddSelectElement("Start Edit", [mainMenu,this]() { mainMenu->disable(); this->startGame("Edit", true); });
 
 	mainMenu->AddSelectElement("Login", [mainMenu, login]() {mainMenu->disable(); login->enable();});
 //	mainMenu->AddSelectElement("Show Goals", [mainMenu, a]() {a-> ShowAllAchievements(true); mainMenu->disable();});
@@ -511,15 +617,15 @@ Race::setupMenus(bool loginRequired)
 	// End of Menu Code
 	//////////////////////////////////////////////////
 
-	mainMenu->enable();
-	//if (loginRequired)
-	//{
-	//	login->enable();
-	//}
-	//else
-	//{
-	//	mainMenu->enable();
-	//}
+	//mainMenu->enable();
+	if (loginRequired)
+	{
+		login->enable();
+	}
+	else
+	{
+		mainMenu->enable();
+	}
 
 }
 
@@ -568,7 +674,7 @@ Race::setup(void)
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
     createScene();
     createFrameListener();
-    setupMenus();
+    setupMenus(true);
 
 
 	Ogre::WindowEventUtilities::addWindowEventListener(mWindow, this);
